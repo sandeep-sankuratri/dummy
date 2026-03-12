@@ -439,6 +439,30 @@ export async function registerRoutes(
     }
   });
 
+  // ── Dropdown Reorder (shared) ─────────────────────────────────
+  const TABLE_MAP: Record<string, string> = {
+    'financial-years':   'financial_years',
+    'itr-types':         'itr_types',
+    'paid-to':           'paid_tos',
+    'mode-of-payment':   'mode_of_payments',
+    'sources':           'sources',
+    'return-outcomes':   'return_outcomes',
+    'itr-status2':       'itr_status2_options',
+  };
+  app.patch("/api/dropdown/:entity/reorder", async (req: Request, res: Response) => {
+    try {
+      const table = TABLE_MAP[req.params.entity];
+      if (!table) return res.status(400).json({ message: "Unknown dropdown entity" });
+      const { ids } = req.body;
+      if (!Array.isArray(ids)) return res.status(400).json({ message: "ids must be an array" });
+      await storage.reorderDropdown(table, ids);
+      res.json({ ok: true });
+    } catch (err: any) {
+      console.error("[PATCH /api/dropdown/:entity/reorder]", err);
+      res.status(500).json({ message: "Failed to reorder" });
+    }
+  });
+
   // ── Clients API ─────────────────────────────────────────────────
   app.get("/api/clients", async (_req: Request, res: Response) => {
     res.json(await storage.getClients());

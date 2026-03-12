@@ -255,6 +255,7 @@ export interface IStorage {
   createReturnOutcome(name: string, color?: string): Promise<ReturnOutcome>;
   updateReturnOutcome(id: string, name: string, color?: string): Promise<ReturnOutcome | undefined>;
   deleteReturnOutcome(id: string): Promise<boolean>;
+  reorderDropdown(table: string, ids: string[]): Promise<void>;
   getReturnDetailLogs(filingId: string): Promise<ReturnDetailLog[]>;
   addReturnDetailLog(filingId: string, fieldLabel: string, newValue: string): Promise<ReturnDetailLog>;
   getItrStatus2Options(): Promise<ItrStatus2Option[]>;
@@ -505,6 +506,13 @@ export class PgStorage implements IStorage {
       EXCEPTION WHEN others THEN NULL; END $$
     `);
     await this._query(`ALTER TABLE itr_status2_options ADD COLUMN IF NOT EXISTS color VARCHAR(7)`);
+    await this._query(`ALTER TABLE financial_years ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE itr_types ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE paid_tos ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE mode_of_payments ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE sources ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE return_outcomes ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
+    await this._query(`ALTER TABLE itr_status2_options ADD COLUMN IF NOT EXISTS sort_order INTEGER DEFAULT 0`);
     await this._query(`ALTER TABLE itr_filings ADD COLUMN IF NOT EXISTS status2_caller TEXT`);
     await this._query(`ALTER TABLE itr_filings ADD COLUMN IF NOT EXISTS status2_preparer TEXT`);
     await this._query(`ALTER TABLE itr_filings ADD COLUMN IF NOT EXISTS manager TEXT`);
@@ -693,12 +701,13 @@ export class PgStorage implements IStorage {
   }
 
   async getFinancialYears() {
-    const { rows } = await this._query("SELECT * FROM financial_years ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM financial_years ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, status: r.status, createdAt: r.created_at } as FinancialYear));
   }
   async createFinancialYear(name: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO financial_years(id,name) VALUES($1,$2)", [id, name]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM financial_years");
+    await this._query("INSERT INTO financial_years(id,name,sort_order) VALUES($1,$2,$3)", [id, name, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM financial_years WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, status: rows[0].status, createdAt: rows[0].created_at } as FinancialYear;
   }
@@ -735,12 +744,13 @@ export class PgStorage implements IStorage {
   }
 
   async getSources() {
-    const { rows } = await this._query("SELECT * FROM sources ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM sources ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, createdAt: r.created_at } as Source));
   }
   async createSource(name: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO sources(id,name) VALUES($1,$2)", [id, name]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM sources");
+    await this._query("INSERT INTO sources(id,name,sort_order) VALUES($1,$2,$3)", [id, name, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM sources WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, createdAt: rows[0].created_at } as Source;
   }
@@ -756,12 +766,13 @@ export class PgStorage implements IStorage {
   }
 
   async getPaidTos() {
-    const { rows } = await this._query("SELECT * FROM paid_tos ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM paid_tos ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, createdAt: r.created_at } as PaidTo));
   }
   async createPaidTo(name: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO paid_tos(id,name) VALUES($1,$2)", [id, name]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM paid_tos");
+    await this._query("INSERT INTO paid_tos(id,name,sort_order) VALUES($1,$2,$3)", [id, name, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM paid_tos WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, createdAt: rows[0].created_at } as PaidTo;
   }
@@ -777,12 +788,13 @@ export class PgStorage implements IStorage {
   }
 
   async getModeOfPayments() {
-    const { rows } = await this._query("SELECT * FROM mode_of_payments ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM mode_of_payments ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, createdAt: r.created_at } as ModeOfPayment));
   }
   async createModeOfPayment(name: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO mode_of_payments(id,name) VALUES($1,$2)", [id, name]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM mode_of_payments");
+    await this._query("INSERT INTO mode_of_payments(id,name,sort_order) VALUES($1,$2,$3)", [id, name, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM mode_of_payments WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, createdAt: rows[0].created_at } as ModeOfPayment;
   }
@@ -798,12 +810,13 @@ export class PgStorage implements IStorage {
   }
 
   async getItrTypes() {
-    const { rows } = await this._query("SELECT * FROM itr_types ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM itr_types ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, createdAt: r.created_at } as ItrType));
   }
   async createItrType(name: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO itr_types(id,name) VALUES($1,$2)", [id, name]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM itr_types");
+    await this._query("INSERT INTO itr_types(id,name,sort_order) VALUES($1,$2,$3)", [id, name, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM itr_types WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, createdAt: rows[0].created_at } as ItrType;
   }
@@ -819,12 +832,13 @@ export class PgStorage implements IStorage {
   }
 
   async getReturnOutcomes() {
-    const { rows } = await this._query("SELECT * FROM return_outcomes ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM return_outcomes ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, color: r.color ?? undefined, createdAt: r.created_at } as ReturnOutcome));
   }
   async createReturnOutcome(name: string, color?: string) {
     const id = randomUUID();
-    await this._query("INSERT INTO return_outcomes(id,name,color) VALUES($1,$2,$3)", [id, name, color ?? null]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM return_outcomes");
+    await this._query("INSERT INTO return_outcomes(id,name,color,sort_order) VALUES($1,$2,$3,$4)", [id, name, color ?? null, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM return_outcomes WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, color: rows[0].color ?? undefined, createdAt: rows[0].created_at } as ReturnOutcome;
   }
@@ -837,6 +851,14 @@ export class PgStorage implements IStorage {
   async deleteReturnOutcome(id: string) {
     const { rowCount } = await this._query("DELETE FROM return_outcomes WHERE id=$1", [id]);
     return (rowCount ?? 0) > 0;
+  }
+
+  async reorderDropdown(table: string, ids: string[]): Promise<void> {
+    const allowed = ['financial_years','itr_types','paid_tos','mode_of_payments','sources','return_outcomes','itr_status2_options'];
+    if (!allowed.includes(table)) throw new Error('Invalid table');
+    for (let i = 0; i < ids.length; i++) {
+      await this._query(`UPDATE ${table} SET sort_order=$1 WHERE id=$2`, [i, ids[i]]);
+    }
   }
 
   async getClients() {
@@ -1018,12 +1040,13 @@ export class PgStorage implements IStorage {
   }
 
   async getItrStatus2Options(): Promise<ItrStatus2Option[]> {
-    const { rows } = await this._query("SELECT * FROM itr_status2_options ORDER BY created_at ASC");
+    const { rows } = await this._query("SELECT * FROM itr_status2_options ORDER BY sort_order ASC, created_at ASC");
     return rows.map(r => ({ id: r.id, name: r.name, role: r.role, color: r.color ?? undefined, createdAt: r.created_at } as ItrStatus2Option));
   }
   async createItrStatus2Option(name: string, role: 'caller' | 'preparer' | 'common' | 'manager', color?: string): Promise<ItrStatus2Option> {
     const id = randomUUID();
-    await this._query("INSERT INTO itr_status2_options(id,name,role,color) VALUES($1,$2,$3,$4)", [id, name, role, color ?? null]);
+    const { rows: mx } = await this._query("SELECT COALESCE(MAX(sort_order),0) AS m FROM itr_status2_options");
+    await this._query("INSERT INTO itr_status2_options(id,name,role,color,sort_order) VALUES($1,$2,$3,$4,$5)", [id, name, role, color ?? null, (mx[0].m as number) + 1]);
     const { rows } = await this._query("SELECT * FROM itr_status2_options WHERE id=$1", [id]);
     return { id: rows[0].id, name: rows[0].name, role: rows[0].role, color: rows[0].color ?? undefined, createdAt: rows[0].created_at } as ItrStatus2Option;
   }
