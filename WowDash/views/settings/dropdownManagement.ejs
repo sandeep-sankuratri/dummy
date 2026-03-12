@@ -1,3 +1,17 @@
+<style>
+.dm-input {
+    font-size: 11px !important;
+    height: 26px !important;
+    padding: 2px 8px !important;
+    line-height: 1.4 !important;
+}
+.dm-input::placeholder { font-size: 11px; }
+.dm-input-color {
+    height: 26px !important;
+    padding: 1px !important;
+}
+</style>
+
 <div class="row" style="row-gap: 12px;">
 
     <!-- ════ ROW 1: Financial Year + ITR Filing Type ════ -->
@@ -11,7 +25,7 @@
                     Financial Year
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="fy_input" class="form-control form-control-sm radius-8" placeholder="e.g. 2025-26" style="width:110px;">
+                    <input type="text" id="fy_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. 2025-26" style="width:110px;">
                     <button type="button" id="fy_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add FY
                     </button>
@@ -47,7 +61,7 @@
                     ITR Filing Type
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="itrType_input" class="form-control form-control-sm radius-8" placeholder="e.g. ITR 8" style="width:110px;">
+                    <input type="text" id="itrType_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. ITR 8" style="width:110px;">
                     <button type="button" id="itrType_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Type
                     </button>
@@ -84,7 +98,7 @@
                     Paid To
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="pt_input" class="form-control form-control-sm radius-8" placeholder="e.g. Sandeep" style="width:110px;">
+                    <input type="text" id="pt_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Sandeep" style="width:110px;">
                     <button type="button" id="pt_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                     </button>
@@ -119,7 +133,7 @@
                     Mode of Payment
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="mop_input" class="form-control form-control-sm radius-8" placeholder="e.g. UPI" style="width:110px;">
+                    <input type="text" id="mop_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. UPI" style="width:110px;">
                     <button type="button" id="mop_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                     </button>
@@ -156,7 +170,7 @@
                     Source
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="src_input" class="form-control form-control-sm radius-8" placeholder="e.g. Facebook Leads" style="width:110px;">
+                    <input type="text" id="src_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Facebook Leads" style="width:110px;">
                     <button type="button" id="src_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                     </button>
@@ -191,8 +205,8 @@
                     Return Outcome
                 </h6>
                 <div class="d-flex align-items-center gap-8">
-                    <input type="text" id="ro_input" class="form-control form-control-sm radius-8" placeholder="e.g. Demand Raised" style="width:100px;">
-                    <input type="color" id="ro_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:26px;height:26px;padding:1px;" title="Badge color">
+                    <input type="text" id="ro_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Demand Raised" style="width:100px;">
+                    <input type="color" id="ro_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0 dm-input-color" style="width:26px;height:26px;padding:1px;" title="Badge color">
                     <button type="button" id="ro_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                         <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                     </button>
@@ -238,8 +252,8 @@
                             <iconify-icon icon="lucide:phone" class="text-primary-600"></iconify-icon> Caller
                         </p>
                         <div class="d-flex align-items-center gap-6 mb-8 flex-wrap">
-                            <input type="text" id="s2c_input" class="form-control form-control-sm radius-8" placeholder="e.g. Pending Documents" style="max-width:200px;">
-                            <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:26px;height:26px;padding:1px;" title="Status color">
+                            <input type="text" id="s2c_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Pending Documents" style="max-width:200px;">
+                            <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0 dm-input-color" style="width:26px;height:26px;padding:1px;" title="Status color">
                             <button type="button" id="s2c_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                                 <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
@@ -259,8 +273,8 @@
                             <iconify-icon icon="lucide:file-check" class="text-secondary-600"></iconify-icon> Tax Preparer
                         </p>
                         <div class="d-flex align-items-center gap-6 mb-8 flex-wrap">
-                            <input type="text" id="s2p_input" class="form-control form-control-sm radius-8" placeholder="e.g. Estimate Sent" style="max-width:200px;">
-                            <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:26px;height:26px;padding:1px;" title="Status color">
+                            <input type="text" id="s2p_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Estimate Sent" style="max-width:200px;">
+                            <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0 dm-input-color" style="width:26px;height:26px;padding:1px;" title="Status color">
                             <button type="button" id="s2p_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                                 <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
@@ -280,8 +294,8 @@
                             <iconify-icon icon="lucide:users" class="text-success-600"></iconify-icon> Common
                         </p>
                         <div class="d-flex align-items-center gap-6 mb-8 flex-wrap">
-                            <input type="text" id="s2o_input" class="form-control form-control-sm radius-8" placeholder="e.g. Completed" style="max-width:220px;">
-                            <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:26px;height:26px;padding:1px;" title="Status color">
+                            <input type="text" id="s2o_input" class="form-control form-control-sm radius-8 dm-input" placeholder="e.g. Completed" style="max-width:220px;">
+                            <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0 dm-input-color" style="width:26px;height:26px;padding:1px;" title="Status color">
                             <button type="button" id="s2o_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-8 py-4 radius-8 text-nowrap">
                                 <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
