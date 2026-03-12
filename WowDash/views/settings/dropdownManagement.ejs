@@ -1,41 +1,29 @@
-<div class="row gy-24">
+<div class="row gy-20">
 
-    <!-- ═══════════════════════════════════════
-         SECTION 1 — CREATE FINANCIAL YEAR
-    ════════════════════════════════════════ -->
-    <div class="col-12">
+    <!-- ════ ROW 1: Financial Year + ITR Filing Type ════ -->
+
+    <!-- SECTION: Financial Year -->
+    <div class="col-lg-6">
         <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:calendar-text-outline" class="text-primary-600 text-xl"></iconify-icon>
-                    Create FY
-                </h5>
-            </div>
-            <div class="card-body p-24">
-
-                <!-- Add FY Form -->
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Financial Year <span class="text-danger-600">*</span></label>
-                        <input type="text" id="fy_input" class="form-control radius-8" placeholder="e.g. 2025-26">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="fy_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add FY
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="fy_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:calendar-text-outline" class="text-primary-600 text-lg"></iconify-icon>
+                    Financial Year
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="fy_input" class="form-control form-control-sm radius-8" placeholder="e.g. 2025-26" style="width:160px;">
+                    <button type="button" id="fy_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add FY
+                    </button>
                 </div>
-
-                <!-- FY Table -->
+            </div>
+            <div class="card-body p-0">
+                <div id="fy_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
                 <div class="table-responsive scroll-sm">
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col">S.L</th>
+                                <th scope="col" style="width:48px">S.L</th>
                                 <th scope="col">Financial Year</th>
                                 <th scope="col">Created Date</th>
                                 <th scope="col" class="text-center">Status</th>
@@ -43,7 +31,7 @@
                             </tr>
                         </thead>
                         <tbody id="fy_tableBody">
-                            <tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -51,46 +39,35 @@
         </div>
     </div>
 
-
-    <!-- ═══════════════════════════════════════
-         SECTION 2 — INDIVIDUAL ITR FILING TYPE
-    ════════════════════════════════════════ -->
-    <div class="col-12">
+    <!-- SECTION: Individual ITR Filing Type -->
+    <div class="col-lg-6">
         <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:file-document-outline" class="text-secondary-600 text-xl"></iconify-icon>
-                    Individual ITR Filing Type
-                </h5>
-            </div>
-            <div class="card-body p-24">
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Type Name <span class="text-danger-600">*</span></label>
-                        <input type="text" id="itrType_input" class="form-control radius-8" placeholder="e.g. ITR 8">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="itrType_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add Type
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="itrType_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:file-document-outline" class="text-secondary-600 text-lg"></iconify-icon>
+                    ITR Filing Type
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="itrType_input" class="form-control form-control-sm radius-8" placeholder="e.g. ITR 8" style="width:160px;">
+                    <button type="button" id="itrType_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Type
+                    </button>
                 </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="itrType_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
                 <div class="table-responsive scroll-sm">
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col">S.L</th>
+                                <th scope="col" style="width:48px">S.L</th>
                                 <th scope="col">Type Name</th>
                                 <th scope="col">Created Date</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="itrType_tableBody">
-                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -98,50 +75,149 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════
-         SECTION 3 — RETURN OUTCOME
-    ════════════════════════════════════════ -->
-    <div class="col-12">
+    <!-- ════ ROW 2: Paid To + Mode of Payment ════ -->
+
+    <!-- SECTION: Paid To -->
+    <div class="col-lg-6">
         <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:check-circle-outline" class="text-success-600 text-xl"></iconify-icon>
-                    Return Outcome
-                </h5>
-            </div>
-            <div class="card-body p-24">
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Outcome Name <span class="text-danger-600">*</span></label>
-                        <input type="text" id="ro_input" class="form-control radius-8" placeholder="e.g. Demand Raised">
-                    </div>
-                    <div class="col-md-2">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
-                        <input type="color" id="ro_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="ro_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add Outcome
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="ro_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:bank-transfer-out" class="text-info-600 text-lg"></iconify-icon>
+                    Paid To
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="pt_input" class="form-control form-control-sm radius-8" placeholder="e.g. Sandeep" style="width:160px;">
+                    <button type="button" id="pt_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
+                    </button>
                 </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="pt_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
                 <div class="table-responsive scroll-sm">
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col">S.L</th>
+                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pt_tableBody">
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: Mode of Payment -->
+    <div class="col-lg-6">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:credit-card-outline" class="text-cyan-600 text-lg"></iconify-icon>
+                    Mode of Payment
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="mop_input" class="form-control form-control-sm radius-8" placeholder="e.g. UPI" style="width:160px;">
+                    <button type="button" id="mop_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="mop_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mop_tableBody">
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ════ ROW 3: Source + Return Outcome ════ -->
+
+    <!-- SECTION: Source -->
+    <div class="col-lg-6">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:source-branch" class="text-danger-600 text-lg"></iconify-icon>
+                    Source
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="src_input" class="form-control form-control-sm radius-8" placeholder="e.g. Facebook Leads" style="width:160px;">
+                    <button type="button" id="src_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="src_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col">Source Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="src_tableBody">
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- SECTION: Return Outcome -->
+    <div class="col-lg-6">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center justify-content-between flex-wrap gap-12">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:check-circle-outline" class="text-success-600 text-lg"></iconify-icon>
+                    Return Outcome
+                </h6>
+                <div class="d-flex align-items-center gap-8">
+                    <input type="text" id="ro_input" class="form-control form-control-sm radius-8" placeholder="e.g. Demand Raised" style="width:150px;">
+                    <input type="color" id="ro_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Badge color">
+                    <button type="button" id="ro_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                        <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
+                    </button>
+                </div>
+            </div>
+            <div class="card-body p-0">
+                <div id="ro_error" class="alert alert-danger d-none py-6 px-16 mb-0 rounded-0 text-sm" role="alert"></div>
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col" style="width:48px">S.L</th>
                                 <th scope="col">Outcome Name</th>
-                                <th scope="col" class="text-center">Color</th>
+                                <th scope="col" class="text-center" style="width:64px">Color</th>
                                 <th scope="col">Created Date</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="ro_tableBody">
-                            <tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -149,33 +225,31 @@
         </div>
     </div>
 
-    <!-- ═══════════════════════════════════════
-         SECTION 2B — INDIVIDUAL ITR FILING STATUS 2
-    ════════════════════════════════════════ -->
+    <!-- ════ ROW 4: ITR Filing Status 2 (full width, tabbed) ════ -->
     <div class="col-12">
-        <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:file-document-edit-outline" class="text-warning-600 text-xl"></iconify-icon>
+        <div class="card p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-12 px-20">
+                <h6 class="fw-semibold mb-0 d-flex align-items-center gap-8 text-sm">
+                    <iconify-icon icon="mdi:file-document-edit-outline" class="text-warning-600 text-lg"></iconify-icon>
                     Individual ITR Filing Status 2
-                </h5>
+                </h6>
             </div>
-            <div class="card-body p-24">
+            <div class="card-body p-16">
 
                 <!-- Tab nav -->
-                <ul class="nav nav-pills mb-20 gap-8" id="s2-tabs" role="tablist">
+                <ul class="nav nav-pills mb-16 gap-8" id="s2-tabs" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active text-sm px-16 py-8" id="s2-caller-tab" data-bs-toggle="pill" data-bs-target="#s2-caller-pane" type="button" role="tab">
+                        <button class="nav-link active text-xs px-14 py-7" id="s2-caller-tab" data-bs-toggle="pill" data-bs-target="#s2-caller-pane" type="button" role="tab">
                             <iconify-icon icon="lucide:phone" class="me-1"></iconify-icon> Caller
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link text-sm px-16 py-8" id="s2-preparer-tab" data-bs-toggle="pill" data-bs-target="#s2-preparer-pane" type="button" role="tab">
+                        <button class="nav-link text-xs px-14 py-7" id="s2-preparer-tab" data-bs-toggle="pill" data-bs-target="#s2-preparer-pane" type="button" role="tab">
                             <iconify-icon icon="lucide:file-check" class="me-1"></iconify-icon> Tax Preparer
                         </button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link text-sm px-16 py-8" id="s2-common-tab" data-bs-toggle="pill" data-bs-target="#s2-common-pane" type="button" role="tab">
+                        <button class="nav-link text-xs px-14 py-7" id="s2-common-tab" data-bs-toggle="pill" data-bs-target="#s2-common-pane" type="button" role="tab">
                             <iconify-icon icon="lucide:users" class="me-1"></iconify-icon> Common
                         </button>
                     </li>
@@ -183,237 +257,60 @@
 
                 <div class="tab-content" id="s2-tabContent">
 
-                    <!-- ── Caller Tab ── -->
+                    <!-- Caller Tab -->
                     <div class="tab-pane fade show active" id="s2-caller-pane" role="tabpanel">
-                        <div class="row g-16 align-items-end mb-24">
-                            <div class="col-md-5">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
-                                <input type="text" id="s2c_input" class="form-control radius-8" placeholder="e.g. Pending Documents">
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
-                                <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" id="s2c_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                                    Add Status
-                                </button>
-                            </div>
-                            <div class="col-12"><div id="s2c_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
+                            <input type="text" id="s2c_input" class="form-control form-control-sm radius-8" placeholder="e.g. Pending Documents" style="max-width:220px;">
+                            <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
+                            <button type="button" id="s2c_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                            </button>
+                            <div id="s2c_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2c_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2c_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- ── Tax Preparer Tab ── -->
+                    <!-- Tax Preparer Tab -->
                     <div class="tab-pane fade" id="s2-preparer-pane" role="tabpanel">
-                        <div class="row g-16 align-items-end mb-24">
-                            <div class="col-md-5">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
-                                <input type="text" id="s2p_input" class="form-control radius-8" placeholder="e.g. Estimate Sent">
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
-                                <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" id="s2p_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                                    Add Status
-                                </button>
-                            </div>
-                            <div class="col-12"><div id="s2p_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
+                            <input type="text" id="s2p_input" class="form-control form-control-sm radius-8" placeholder="e.g. Estimate Sent" style="max-width:220px;">
+                            <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
+                            <button type="button" id="s2p_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                            </button>
+                            <div id="s2p_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2p_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2p_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
 
-                    <!-- ── Common Tab ── -->
+                    <!-- Common Tab -->
                     <div class="tab-pane fade" id="s2-common-pane" role="tabpanel">
-                        <div class="row g-16 align-items-end mb-24">
-                            <div class="col-md-5">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
-                                <input type="text" id="s2o_input" class="form-control radius-8" placeholder="e.g. Completed">
-                            </div>
-                            <div class="col-auto">
-                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
-                                <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
-                            </div>
-                            <div class="col-md-3">
-                                <button type="button" id="s2o_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                                    Add Status
-                                </button>
-                            </div>
-                            <div class="col-12"><div id="s2o_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
+                            <input type="text" id="s2o_input" class="form-control form-control-sm radius-8" placeholder="e.g. Completed" style="max-width:220px;">
+                            <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
+                            <button type="button" id="s2o_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                            </button>
+                            <div id="s2o_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2o_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2o_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
 
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         SECTION 4 — PAID TO MANAGEMENT
-    ════════════════════════════════════════ -->
-    <div class="col-12">
-        <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:bank-transfer-out" class="text-info-600 text-xl"></iconify-icon>
-                    Paid To
-                </h5>
-            </div>
-            <div class="card-body p-24">
-
-                <!-- Add Paid To Form -->
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
-                        <input type="text" id="pt_input" class="form-control radius-8" placeholder="e.g. Sandeep">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="pt_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add Paid To
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="pt_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
-                </div>
-
-                <!-- Paid To Table -->
-                <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.L</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Created Date</th>
-                                <th scope="col" class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="pt_tableBody">
-                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         SECTION 5 — MODE OF PAYMENT
-    ════════════════════════════════════════ -->
-    <div class="col-12">
-        <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:credit-card-outline" class="text-cyan-600 text-xl"></iconify-icon>
-                    Mode of Payment
-                </h5>
-            </div>
-            <div class="card-body p-24">
-
-                <!-- Add Mode of Payment Form -->
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
-                        <input type="text" id="mop_input" class="form-control radius-8" placeholder="e.g. UPI">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="mop_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add Mode
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="mop_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
-                </div>
-
-                <!-- Mode of Payment Table -->
-                <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.L</th>
-                                <th scope="col">Name</th>
-                                <th scope="col">Created Date</th>
-                                <th scope="col" class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mop_tableBody">
-                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- ═══════════════════════════════════════
-         SECTION 3 — SOURCE MANAGEMENT
-    ════════════════════════════════════════ -->
-    <div class="col-12">
-        <div class="card h-100 p-0 radius-12">
-            <div class="card-header border-bottom bg-base py-16 px-24">
-                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
-                    <iconify-icon icon="mdi:source-branch" class="text-danger-600 text-xl"></iconify-icon>
-                    Source
-                </h5>
-            </div>
-            <div class="card-body p-24">
-
-                <!-- Add Source Form -->
-                <div class="row g-16 align-items-end mb-24">
-                    <div class="col-md-5">
-                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Source Name <span class="text-danger-600">*</span></label>
-                        <input type="text" id="src_input" class="form-control radius-8" placeholder="e.g. Facebook Leads">
-                    </div>
-                    <div class="col-md-3">
-                        <button type="button" id="src_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
-                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
-                            Add Source
-                        </button>
-                    </div>
-                    <div class="col-12">
-                        <div id="src_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
-                    </div>
-                </div>
-
-                <!-- Source Table -->
-                <div class="table-responsive scroll-sm">
-                    <table class="table bordered-table sm-table mb-0">
-                        <thead>
-                            <tr>
-                                <th scope="col">S.L</th>
-                                <th scope="col">Source Name</th>
-                                <th scope="col">Created Date</th>
-                                <th scope="col" class="text-center">Action</th>
-                            </tr>
-                        </thead>
-                        <tbody id="src_tableBody">
-                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
-                        </tbody>
-                    </table>
                 </div>
             </div>
         </div>
@@ -422,9 +319,11 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════
-     EDIT FY MODAL
+<!-- ════════════════════════════════════════
+     MODALS
 ════════════════════════════════════════ -->
+
+<!-- Edit FY Modal -->
 <div class="modal fade" id="editFyModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -446,10 +345,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT RETURN OUTCOME MODAL
-════════════════════════════════════════ -->
+<!-- Edit Return Outcome Modal -->
 <div class="modal fade" id="editRoModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -476,10 +372,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT ITR TYPE MODAL
-════════════════════════════════════════ -->
+<!-- Edit ITR Type Modal -->
 <div class="modal fade" id="editItrTypeModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -501,10 +394,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT MODE OF PAYMENT MODAL
-════════════════════════════════════════ -->
+<!-- Edit Mode of Payment Modal -->
 <div class="modal fade" id="editMopModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -526,10 +416,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT PAID TO MODAL
-════════════════════════════════════════ -->
+<!-- Edit Paid To Modal -->
 <div class="modal fade" id="editPtModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -551,10 +438,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT SOURCE MODAL
-════════════════════════════════════════ -->
+<!-- Edit Source Modal -->
 <div class="modal fade" id="editSrcModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -576,10 +460,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     EDIT ITR STATUS 2 MODAL
-════════════════════════════════════════ -->
+<!-- Edit ITR Status 2 Modal -->
 <div class="modal fade" id="editS2Modal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -606,10 +487,7 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     DELETE CONFIRMATION MODAL
-════════════════════════════════════════ -->
+<!-- Delete Confirmation Modal -->
 <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content radius-16 bg-base">
@@ -629,10 +507,6 @@
     </div>
 </div>
 
-
-<!-- ═══════════════════════════════════════
-     JAVASCRIPT
-════════════════════════════════════════ -->
 <script>
 (function () {
     let allFYs = [];
