@@ -230,34 +230,18 @@
             </div>
             <div class="card-body p-16">
 
-                <!-- Tab nav -->
-                <ul class="nav nav-pills mb-16 gap-8" id="s2-tabs" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active text-xs px-14 py-7" id="s2-caller-tab" data-bs-toggle="pill" data-bs-target="#s2-caller-pane" type="button" role="tab">
-                            <iconify-icon icon="lucide:phone" class="me-1"></iconify-icon> Caller
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link text-xs px-14 py-7" id="s2-preparer-tab" data-bs-toggle="pill" data-bs-target="#s2-preparer-pane" type="button" role="tab">
-                            <iconify-icon icon="lucide:file-check" class="me-1"></iconify-icon> Tax Preparer
-                        </button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link text-xs px-14 py-7" id="s2-common-tab" data-bs-toggle="pill" data-bs-target="#s2-common-pane" type="button" role="tab">
-                            <iconify-icon icon="lucide:users" class="me-1"></iconify-icon> Common
-                        </button>
-                    </li>
-                </ul>
+                <div class="row g-16">
 
-                <div class="tab-content" id="s2-tabContent">
-
-                    <!-- Caller Tab -->
-                    <div class="tab-pane fade show active" id="s2-caller-pane" role="tabpanel">
+                    <!-- Caller -->
+                    <div class="col-lg-6">
+                        <p class="fw-semibold text-sm mb-10 d-flex align-items-center gap-6">
+                            <iconify-icon icon="lucide:phone" class="text-primary-600"></iconify-icon> Caller
+                        </p>
                         <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
-                            <input type="text" id="s2c_input" class="form-control form-control-sm radius-8" placeholder="e.g. Pending Documents" style="max-width:220px;">
+                            <input type="text" id="s2c_input" class="form-control form-control-sm radius-8" placeholder="e.g. Pending Documents" style="max-width:200px;">
                             <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
                             <button type="button" id="s2c_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
-                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
                             <div id="s2c_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
@@ -269,13 +253,16 @@
                         </div>
                     </div>
 
-                    <!-- Tax Preparer Tab -->
-                    <div class="tab-pane fade" id="s2-preparer-pane" role="tabpanel">
+                    <!-- Tax Preparer -->
+                    <div class="col-lg-6">
+                        <p class="fw-semibold text-sm mb-10 d-flex align-items-center gap-6">
+                            <iconify-icon icon="lucide:file-check" class="text-secondary-600"></iconify-icon> Tax Preparer
+                        </p>
                         <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
-                            <input type="text" id="s2p_input" class="form-control form-control-sm radius-8" placeholder="e.g. Estimate Sent" style="max-width:220px;">
+                            <input type="text" id="s2p_input" class="form-control form-control-sm radius-8" placeholder="e.g. Estimate Sent" style="max-width:200px;">
                             <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
                             <button type="button" id="s2p_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
-                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
                             <div id="s2p_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
@@ -287,13 +274,16 @@
                         </div>
                     </div>
 
-                    <!-- Common Tab -->
-                    <div class="tab-pane fade" id="s2-common-pane" role="tabpanel">
+                    <!-- Common -->
+                    <div class="col-12 border-top pt-16">
+                        <p class="fw-semibold text-sm mb-10 d-flex align-items-center gap-6">
+                            <iconify-icon icon="lucide:users" class="text-success-600"></iconify-icon> Common
+                        </p>
                         <div class="d-flex align-items-center gap-8 mb-12 flex-wrap">
                             <input type="text" id="s2o_input" class="form-control form-control-sm radius-8" placeholder="e.g. Completed" style="max-width:220px;">
                             <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8 flex-shrink-0" style="width:34px;height:31px;padding:2px;" title="Status color">
                             <button type="button" id="s2o_addBtn" class="btn btn-primary btn-sm d-flex align-items-center gap-1 text-xs px-12 py-8 radius-8 text-nowrap">
-                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add Status
+                                <iconify-icon icon="ic:baseline-plus" class="text-md"></iconify-icon> Add
                             </button>
                             <div id="s2o_error" class="alert alert-danger d-none py-4 px-12 mb-0 text-xs" role="alert"></div>
                         </div>
