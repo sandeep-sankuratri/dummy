@@ -1,0 +1,31 @@
+<!-- meta tags and other links -->
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+  <%- include('../partials/head') %>
+  <style>
+    .navbar-has-chips { height: auto !important; padding-bottom: 10px; }
+    .navbar-chips-row { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; padding-top: 10px; border-top: 1px solid #f1f5f9; margin-top: 6px; }
+  </style>
+  <body>
+  <%- include('../partials/sidebar') %>
+
+    <main class="dashboard-main active">
+      <%- include('../partials/navbar') %>
+
+        <div class="dashboard-main-body">
+            <% if (typeof hideBreadcrumb === 'undefined' || !hideBreadcrumb) { %>
+            <%- include('../partials/breadcrumb'), {title:title, subTitle:subTitle} %>
+            <% } %>
+
+            <%- body %>
+        </div>
+
+    </main>
+    <%- include('../partials/scripts') %> 
+
+   <!-- Add the script block here -->
+   <% if (typeof script !== 'undefined') { %>
+    <%- script %>
+  <% } %>
+  </body>
+</html>

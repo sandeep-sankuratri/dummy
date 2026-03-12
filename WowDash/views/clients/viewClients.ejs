@@ -1,0 +1,690 @@
+<style>
+@media print {
+    body * { visibility: hidden; }
+    #printArea, #printArea * { visibility: visible; }
+    #printArea { position: absolute; top: 0; left: 0; width: 100%; }
+    #printArea table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    #printArea th, #printArea td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+    #printArea th { background: #f1f5f9; }
+}
+
+/* Custom select wrapper */
+.csel-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+}
+.csel-wrap select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+    font-size: .75rem;
+}
+.csel-face {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    height: 34px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: .75rem;
+    background: var(--bg-base, #fff);
+    color: inherit;
+    white-space: nowrap;
+    pointer-events: none;
+    width: 100%;
+}
+.csel-face .csel-arrow {
+    font-size: .65rem;
+    flex-shrink: 0;
+    opacity: .55;
+}
+.csel-wrap select:focus + .csel-face {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 2px rgba(99,102,241,.15);
+}
+</style>
+
+<div class="card h-100 p-0 radius-12">
+
+    <!-- Card Header -->
+    <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center gap-8 justify-content-between flex-nowrap">
+
+        <!-- Left: show + search + filters -->
+        <div class="d-flex align-items-center flex-wrap gap-8">
+
+            <!-- Page size -->
+            <div class="csel-wrap" style="width:66px;">
+                <select id="pageSizeSelect">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <div class="csel-face">
+                    <span id="pageSizeFaceLabel">10</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <form class="navbar-search mb-0" onsubmit="return false;">
+                <input type="text" id="searchInput" class="bg-base" placeholder="Search name, PAN, mobile…"
+                    style="height:34px;padding-left:32px;font-size:.75rem;min-width:200px;">
+                <iconify-icon icon="ion:search-outline" class="icon" style="font-size:.85rem;top:50%;transform:translateY(-50%);"></iconify-icon>
+            </form>
+
+            <!-- Status filter -->
+            <div class="csel-wrap" style="width:108px;">
+                <select id="filterStatus">
+                    <option value="">All Status</option>
+                    <option value="Active">Active</option>
+                    <option value="Inactive">Inactive</option>
+                </select>
+                <div class="csel-face">
+                    <span id="filterStatusLabel">All Status</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Caller filter -->
+            <div class="csel-wrap" style="width:120px;">
+                <select id="filterCaller">
+                    <option value="">All Callers</option>
+                </select>
+                <div class="csel-face">
+                    <span id="filterCallerLabel">All Callers</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Source filter -->
+            <div class="csel-wrap" style="width:120px;">
+                <select id="filterSource">
+                    <option value="">All Sources</option>
+                </select>
+                <div class="csel-face">
+                    <span id="filterSourceLabel">All Sources</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <button type="button" id="clearFiltersBtn"
+                class="btn border border-secondary-light text-secondary-light text-xs radius-8 d-none d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 10px;white-space:nowrap;">
+                <iconify-icon icon="lucide:x" style="font-size:.7rem;"></iconify-icon>Clear
+            </button>
+        </div>
+
+        <!-- Right: export + add -->
+        <div class="d-flex align-items-center gap-6 flex-shrink-0">
+            <button type="button" id="exportCsvBtn" title="Export CSV"
+                class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 12px;white-space:nowrap;">
+                <iconify-icon icon="lucide:file-spreadsheet" style="font-size:.85rem;"></iconify-icon>CSV
+            </button>
+            <button type="button" id="exportPdfBtn" title="Export PDF"
+                class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 12px;white-space:nowrap;">
+                <iconify-icon icon="lucide:file-text" style="font-size:.85rem;"></iconify-icon>PDF
+            </button>
+            <a href="/clients/add-client"
+                class="btn btn-primary text-xs radius-8 d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 14px;white-space:nowrap;">
+                <iconify-icon icon="ic:baseline-plus" style="font-size:.9rem;"></iconify-icon>Add Client
+            </a>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body p-24">
+        <div class="table-responsive scroll-sm">
+            <table class="table bordered-table sm-table mb-0" id="clientsTable">
+                <thead>
+                    <tr>
+                        <th scope="col">S.L</th>
+                        <th scope="col">Name</th>
+                        <th scope="col">Mobile</th>
+                        <th scope="col">PAN</th>
+                        <th scope="col">Caller</th>
+                        <th scope="col">Source</th>
+                        <th scope="col">Status</th>
+                        <th scope="col">Created Date</th>
+                        <th scope="col" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody id="clientTableBody">
+                    <tr><td colspan="9" class="text-center py-24 text-secondary-light">
+                        <iconify-icon icon="svg-spinners:ring-resize" class="text-xl"></iconify-icon>&nbsp;Loading...
+                    </td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 mt-24">
+            <span id="paginationInfo" class="text-secondary-light text-sm">Showing 0 to 0 of 0 entries</span>
+            <ul id="paginationList" class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0"></ul>
+        </div>
+    </div>
+</div>
+
+
+<!-- Hidden print area -->
+<div id="printArea" style="display:none;"></div>
+
+
+<!-- ═══════════════ ADD SERVICE MODAL ════════════════ -->
+<div class="modal fade" id="addServiceModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header px-24 py-16 border-bottom">
+                <h5 class="modal-title fw-semibold">Add Service</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <!-- Client summary -->
+                <div class="d-flex align-items-center gap-12 p-14 radius-12 border mb-20" style="background:#f8fafc;">
+                    <div class="w-40-px h-40-px bg-primary-600 text-white d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 fw-bold text-sm" id="svcClientAvatar">?</div>
+                    <div>
+                        <div class="fw-semibold text-sm text-primary-light" id="svcClientName">—</div>
+                        <div class="text-secondary-light text-xs" id="svcClientMeta">—</div>
+                    </div>
+                </div>
+
+                <!-- Service selector -->
+                <div class="mb-16">
+                    <label class="form-label fw-semibold text-primary-light text-sm mb-8">Service <span class="text-danger-600">*</span></label>
+                    <select id="svcServiceSelect" class="form-select radius-8">
+                        <option value="">— Select service —</option>
+                        <option value="itr-individual">ITR Individual Filing</option>
+                    </select>
+                    <div id="svcServiceError" class="text-danger-600 text-xs mt-6 d-none">Please select a service.</div>
+                </div>
+
+                <!-- FY selector (shown when service is selected) -->
+                <div id="svcFyWrap" class="d-none">
+                    <label class="form-label fw-semibold text-primary-light text-sm mb-8">Financial Year <span class="text-danger-600">*</span></label>
+                    <select id="svcFySelect" class="form-select radius-8">
+                        <option value="">— Select FY —</option>
+                    </select>
+                    <div id="svcFyError" class="text-danger-600 text-xs mt-6 d-none">Please select a financial year.</div>
+                </div>
+
+                <div id="svcGenericError" class="alert alert-danger text-sm mt-12 d-none"></div>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 gap-12">
+                <button type="button" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-24 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="svcConfirmBtn" class="btn btn-primary text-md px-24 py-12 radius-8">Assign Service</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════ DEACTIVATE CONFIRMATION MODAL ════════════════ -->
+<div class="modal fade" id="deactivateClientModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-12 bg-base">
+            <div class="modal-body p-20">
+                <div class="d-flex align-items-start gap-12 mb-16">
+                    <span class="w-32-px h-32-px bg-warning-100 d-flex align-items-center justify-content-center rounded-circle flex-shrink-0">
+                        <iconify-icon icon="lucide:toggle-right" class="text-warning-600" style="font-size:1rem;"></iconify-icon>
+                    </span>
+                    <div>
+                        <div class="fw-semibold text-sm mb-4">Deactivate Client</div>
+                        <p class="text-secondary-light text-xs mb-0">Are you sure? You can reactivate them at any time.</p>
+                    </div>
+                </div>
+                <div class="d-flex justify-content-end gap-8">
+                    <button type="button" class="btn border border-secondary-light text-secondary-light text-xs px-16 py-7 radius-8" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmDeactivateClientBtn" class="btn btn-warning text-xs px-16 py-7 radius-8">Deactivate</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════ DELETE CONFIRMATION MODAL ════════════════ -->
+<div class="modal fade" id="deleteClientModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-12 bg-base border-0" style="box-shadow:0 8px 32px rgba(0,0,0,.12);">
+            <div class="modal-body p-24">
+
+                <!-- Title row -->
+                <div class="d-flex align-items-center gap-10 mb-12">
+                    <span class="w-28-px h-28-px bg-danger-100 d-flex align-items-center justify-content-center rounded-circle flex-shrink-0">
+                        <iconify-icon icon="fluent:delete-24-regular" class="text-danger-600" style="font-size:.85rem;"></iconify-icon>
+                    </span>
+                    <span class="fw-semibold text-sm">Delete Client</span>
+                </div>
+
+                <!-- Message with PAN badge -->
+                <p class="text-secondary-light text-xs mb-16" style="line-height:1.6;">
+                    This action cannot be undone. Type
+                    <span id="deleteClientPanDisplay"
+                          class="fw-semibold text-danger-600"
+                          style="font-family:monospace;background:#fff0f0;border-radius:4px;padding:1px 6px;border:1px solid #fecaca;letter-spacing:.06em;"></span>
+                    to confirm.
+                </p>
+
+                <!-- Input -->
+                <input type="text" id="deletePanInput"
+                    class="form-control text-sm radius-8 mb-6"
+                    placeholder="Enter PAN"
+                    autocomplete="off"
+                    style="height:38px;text-transform:uppercase;letter-spacing:.06em;font-family:monospace;">
+                <div id="deletePanError" class="text-danger-600 text-xs mb-14 d-none"></div>
+
+                <!-- Buttons -->
+                <div class="d-flex gap-8 mt-16">
+                    <button type="button" class="btn border border-secondary-light text-secondary-light text-xs radius-8 flex-fill py-8" data-bs-dismiss="modal">Cancel</button>
+                    <button type="button" id="confirmDeleteClientBtn" class="btn btn-danger text-xs radius-8 flex-fill py-8">Delete</button>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    let allClients = [];
+    let filteredClients = [];
+    let currentPage = 1;
+    let pageSize = 10;
+    let pendingDeleteId = null;
+    let pendingToggleId = null;
+    let svcClientId = null;
+    let fyOptions = [];
+
+    function escHtml(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+    function formatDate(iso) {
+        if (!iso) return '—';
+        return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+    function showToast(msg, type) {
+        const d = document.createElement('div');
+        d.className = `alert alert-${type === 'error' ? 'danger' : 'success'} position-fixed top-0 end-0 m-24 shadow-sm`;
+        d.style.cssText = 'min-width:280px;z-index:9999;';
+        d.textContent = msg;
+        document.body.appendChild(d);
+        setTimeout(() => d.remove(), 3000);
+    }
+    function initials(name) {
+        return (name || '?').split(' ').map(w => w[0]).join('').toUpperCase().slice(0, 2);
+    }
+
+    // ── Load clients ─────────────────────────────────────────
+    async function loadClients() {
+        const res = await fetch('/api/clients');
+        allClients = await res.json();
+        populateFilterDropdowns();
+        applyFilters();
+    }
+
+    function populateFilterDropdowns() {
+        const callers = [...new Set(allClients.map(c => c.caller).filter(Boolean))].sort();
+        const sources = [...new Set(allClients.map(c => c.source).filter(Boolean))].sort();
+        const callerSel = document.getElementById('filterCaller');
+        const sourceSel = document.getElementById('filterSource');
+        callerSel.innerHTML = '<option value="">All Callers</option>' +
+            callers.map(v => `<option value="${escHtml(v)}">${escHtml(v)}</option>`).join('');
+        sourceSel.innerHTML = '<option value="">All Sources</option>' +
+            sources.map(v => `<option value="${escHtml(v)}">${escHtml(v)}</option>`).join('');
+    }
+
+    function applyFilters() {
+        const q      = document.getElementById('searchInput').value.trim().toLowerCase();
+        const status = document.getElementById('filterStatus').value;
+        const caller = document.getElementById('filterCaller').value;
+        const source = document.getElementById('filterSource').value;
+        const hasFilter = q || status || caller || source;
+        document.getElementById('clearFiltersBtn').classList.toggle('d-none', !hasFilter);
+
+        filteredClients = allClients.filter(c => {
+            if (status && c.status !== status) return false;
+            if (caller && c.caller !== caller) return false;
+            if (source && c.source !== source) return false;
+            if (q && !(
+                c.name.toLowerCase().includes(q) ||
+                c.mobile.toLowerCase().includes(q) ||
+                (c.pan || '').toLowerCase().includes(q) ||
+                (c.caller || '').toLowerCase().includes(q) ||
+                (c.source || '').toLowerCase().includes(q)
+            )) return false;
+            return true;
+        });
+        currentPage = 1;
+        renderTable();
+        renderPagination();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('clientTableBody');
+        const start = (currentPage - 1) * pageSize;
+        const end   = Math.min(start + pageSize, filteredClients.length);
+        const page  = filteredClients.slice(start, end);
+
+        if (!filteredClients.length) {
+            tbody.innerHTML = '<tr><td colspan="9" class="text-center py-24 text-secondary-light">No clients found.</td></tr>';
+            document.getElementById('paginationInfo').textContent = 'Showing 0 to 0 of 0 entries';
+            return;
+        }
+
+        tbody.innerHTML = page.map((c, i) => `<tr>
+            <td>${String(start + i + 1).padStart(2,'0')}</td>
+            <td>
+                <a href="/clients/view-client/${c.id}" class="fw-semibold text-primary-600 text-hover-primary-800" style="text-decoration:none;">
+                    ${escHtml(c.name)}
+                </a>
+            </td>
+            <td>${escHtml(c.mobile)}</td>
+            <td><span class="fw-semibold">${escHtml(c.pan)}</span></td>
+            <td>${c.caller ? escHtml(c.caller) : '<span class="text-secondary-light">—</span>'}</td>
+            <td>${c.source ? escHtml(c.source) : '<span class="text-secondary-light">—</span>'}</td>
+            <td>
+                <span class="badge text-sm fw-semibold px-10 py-4 radius-8 ${c.status === 'Active' ? 'bg-success-focus text-success-600' : 'bg-danger-focus text-danger-600'}">
+                    ${escHtml(c.status || 'Active')}
+                </span>
+            </td>
+            <td>${formatDate(c.createdAt)}</td>
+            <td class="text-center">
+                <div class="d-flex align-items-center gap-6 justify-content-center">
+                    <button type="button"
+                        class="bg-primary-focus text-primary-600 bg-hover-primary-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                        title="Add Service" onclick="openAddService('${c.id}')">
+                        <iconify-icon icon="lucide:plus-circle" class="menu-icon"></iconify-icon>
+                    </button>
+                    <button type="button"
+                        class="${c.status === 'Active' ? 'bg-warning-focus text-warning-600 bg-hover-warning-200' : 'bg-success-focus text-success-600 bg-hover-success-200'} fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                        title="${c.status === 'Active' ? 'Deactivate' : 'Activate'}" onclick="toggleStatus('${c.id}')">
+                        <iconify-icon icon="${c.status === 'Active' ? 'lucide:toggle-right' : 'lucide:toggle-left'}" class="menu-icon"></iconify-icon>
+                    </button>
+                    <button type="button"
+                        class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                        title="Delete" onclick="openDeleteClient('${c.id}')">
+                        <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                    </button>
+                </div>
+            </td>
+        </tr>`).join('');
+
+        document.getElementById('paginationInfo').textContent =
+            `Showing ${start + 1} to ${end} of ${filteredClients.length} entries`;
+    }
+
+    function renderPagination() {
+        const totalPages = Math.ceil(filteredClients.length / pageSize);
+        const ul = document.getElementById('paginationList');
+        if (totalPages <= 1) { ul.innerHTML = ''; return; }
+        let html = `<li class="page-item"><a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md ${currentPage===1?'pe-none opacity-50':''}" href="javascript:void(0)" onclick="goPage(${currentPage-1})"><iconify-icon icon="ep:d-arrow-left"></iconify-icon></a></li>`;
+        for (let p = 1; p <= totalPages; p++) {
+            const ac = p === currentPage ? 'bg-primary-600 text-white' : 'bg-neutral-200 text-secondary-light';
+            html += `<li class="page-item"><a class="page-link ${ac} fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md" href="javascript:void(0)" onclick="goPage(${p})">${p}</a></li>`;
+        }
+        html += `<li class="page-item"><a class="page-link bg-neutral-200 text-secondary-light fw-semibold radius-8 border-0 d-flex align-items-center justify-content-center h-32-px w-32-px text-md ${currentPage===totalPages?'pe-none opacity-50':''}" href="javascript:void(0)" onclick="goPage(${currentPage+1})"><iconify-icon icon="ep:d-arrow-right"></iconify-icon></a></li>`;
+        ul.innerHTML = html;
+    }
+
+    window.goPage = function(p) {
+        const total = Math.ceil(filteredClients.length / pageSize);
+        if (p < 1 || p > total) return;
+        currentPage = p; renderTable(); renderPagination();
+    };
+
+    // ── Toggle status ─────────────────────────────────────────
+    async function doToggleStatus(id) {
+        try {
+            const res = await fetch(`/api/clients/${id}/toggle-status`, { method: 'PATCH' });
+            if (!res.ok) throw new Error();
+            const updated = await res.json();
+            const idx = allClients.findIndex(c => c.id === id);
+            if (idx !== -1) allClients[idx] = updated;
+            applyFilters();
+            showToast(`Client marked as ${updated.status}.`, 'success');
+        } catch { showToast('Failed to update status.', 'error'); }
+    }
+
+    window.toggleStatus = function(id) {
+        const client = allClients.find(c => c.id === id);
+        if (!client) return;
+        if (client.status === 'Active') {
+            pendingToggleId = id;
+            new bootstrap.Modal(document.getElementById('deactivateClientModal')).show();
+        } else {
+            doToggleStatus(id);
+        }
+    };
+
+    document.getElementById('confirmDeactivateClientBtn').addEventListener('click', async function () {
+        if (!pendingToggleId) return;
+        this.disabled = true; this.textContent = 'Deactivating…';
+        bootstrap.Modal.getInstance(document.getElementById('deactivateClientModal')).hide();
+        await doToggleStatus(pendingToggleId);
+        pendingToggleId = null;
+        this.disabled = false; this.textContent = 'Deactivate';
+    });
+
+    // ── Delete ────────────────────────────────────────────────
+    let pendingDeletePan = null;
+
+    window.openDeleteClient = function(id) {
+        const client = allClients.find(c => c.id === id);
+        if (!client) return;
+        pendingDeleteId  = id;
+        pendingDeletePan = (client.pan || '').toUpperCase();
+        document.getElementById('deleteClientPanDisplay').textContent = pendingDeletePan;
+        document.getElementById('deletePanInput').value = '';
+        const errEl = document.getElementById('deletePanError');
+        errEl.textContent = '';
+        errEl.className = 'text-danger-600 text-xs mb-14 d-none';
+        new bootstrap.Modal(document.getElementById('deleteClientModal')).show();
+    };
+
+    document.getElementById('deletePanInput').addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+        document.getElementById('deletePanError').classList.add('d-none');
+    });
+
+    document.getElementById('confirmDeleteClientBtn').addEventListener('click', async function() {
+        if (!pendingDeleteId) return;
+        const entered = document.getElementById('deletePanInput').value.trim().toUpperCase();
+        const errEl   = document.getElementById('deletePanError');
+        if (!entered) {
+            errEl.textContent = 'Please enter the PAN to confirm.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        if (entered !== pendingDeletePan) {
+            errEl.textContent = 'PAN does not match. Please try again.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        this.disabled = true; this.textContent = 'Deleting…';
+        try {
+            const res = await fetch(`/api/clients/${pendingDeleteId}`, { method: 'DELETE' });
+            if (res.status === 409) {
+                const data = await res.json();
+                const warningEl = document.getElementById('deletePanError');
+                let msg = data.message || 'Cannot delete this client.';
+                if (data.filings && data.filings.length) {
+                    const list = data.filings.map(f => `${f.service} (FY ${f.financialYear})`).join(', ');
+                    msg = `This client has ${data.filings.length} active service(s): ${list}. Remove these services first before deleting the client.`;
+                }
+                warningEl.innerHTML = '<iconify-icon icon="lucide:alert-triangle" style="font-size:.85rem;vertical-align:-2px;margin-right:4px;"></iconify-icon>' + escHtml(msg);
+                warningEl.className = 'text-warning-600 text-xs mb-14';
+                return;
+            }
+            if (!res.ok) throw new Error();
+            bootstrap.Modal.getInstance(document.getElementById('deleteClientModal')).hide();
+            showToast('Client deleted.', 'success');
+            pendingDeleteId = null; pendingDeletePan = null;
+            await loadClients();
+        } catch { showToast('Failed to delete.', 'error'); pendingDeleteId = null; pendingDeletePan = null; }
+        finally { this.disabled = false; this.textContent = 'Delete'; }
+    });
+
+    // ── Add Service ───────────────────────────────────────────
+    async function loadFyOptions() {
+        try {
+            const res = await fetch('/api/financial-years');
+            fyOptions = res.ok ? await res.json() : [];
+        } catch { fyOptions = []; }
+    }
+
+    window.openAddService = function(id) {
+        const client = allClients.find(c => c.id === id);
+        if (!client) return;
+        svcClientId = id;
+        document.getElementById('svcClientAvatar').textContent = initials(client.name);
+        document.getElementById('svcClientName').textContent = client.name;
+        document.getElementById('svcClientMeta').textContent = `PAN: ${client.pan || '—'}  |  Mobile: ${client.mobile || '—'}`;
+        document.getElementById('svcServiceSelect').value = '';
+        document.getElementById('svcFyWrap').classList.add('d-none');
+        document.getElementById('svcServiceError').classList.add('d-none');
+        document.getElementById('svcFyError').classList.add('d-none');
+        document.getElementById('svcGenericError').classList.add('d-none');
+        const btn = document.getElementById('svcConfirmBtn');
+        btn.disabled = false; btn.textContent = 'Assign Service';
+        new bootstrap.Modal(document.getElementById('addServiceModal')).show();
+    };
+
+    document.getElementById('svcServiceSelect').addEventListener('change', function() {
+        const fyWrap = document.getElementById('svcFyWrap');
+        if (!this.value) { fyWrap.classList.add('d-none'); return; }
+        fyWrap.classList.remove('d-none');
+        const sel = document.getElementById('svcFySelect');
+        sel.innerHTML = '<option value="">— Select FY —</option>' +
+            fyOptions.map(fy => `<option value="${escHtml(fy.name)}">${escHtml(fy.name)}</option>`).join('');
+    });
+
+    document.getElementById('svcConfirmBtn').addEventListener('click', async function() {
+        const service = document.getElementById('svcServiceSelect').value;
+        const fy      = document.getElementById('svcFySelect').value;
+        let ok = true;
+
+        document.getElementById('svcServiceError').classList.toggle('d-none', !!service);
+        if (!service) ok = false;
+        if (service) {
+            document.getElementById('svcFyError').classList.toggle('d-none', !!fy);
+            if (!fy) ok = false;
+        }
+        if (!ok) return;
+
+        this.disabled = true; this.textContent = 'Assigning…';
+        document.getElementById('svcGenericError').classList.add('d-none');
+
+        try {
+            if (service === 'itr-individual') {
+                const res = await fetch('/api/itr-filings', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ clientId: svcClientId, financialYear: fy }),
+                });
+                const data = await res.json();
+                if (!res.ok) throw new Error(data.message || 'Failed to assign service.');
+                bootstrap.Modal.getInstance(document.getElementById('addServiceModal')).hide();
+                showToast('Service assigned successfully.', 'success');
+                window.location.href = `/services/itr-individual/${data.id}`;
+            }
+        } catch(e) {
+            const errEl = document.getElementById('svcGenericError');
+            errEl.textContent = e.message;
+            errEl.classList.remove('d-none');
+            this.disabled = false; this.textContent = 'Assign Service';
+        }
+    });
+
+    // ── Export CSV ────────────────────────────────────────────
+    document.getElementById('exportCsvBtn').addEventListener('click', function() {
+        const headers = ['S.L','Name','Mobile','PAN','Caller','Source','Status','Created Date'];
+        const rows = filteredClients.map((c, i) => [
+            i + 1,
+            `"${(c.name || '').replace(/"/g,'""')}"`,
+            c.mobile || '',
+            c.pan || '',
+            `"${(c.caller || '').replace(/"/g,'""')}"`,
+            `"${(c.source || '').replace(/"/g,'""')}"`,
+            c.status || '',
+            formatDate(c.createdAt),
+        ]);
+        const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+        const blob = new Blob([csv], { type: 'text/csv' });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = `clients_${new Date().toISOString().slice(0,10)}.csv`;
+        a.click();
+    });
+
+    // ── Export PDF (print) ────────────────────────────────────
+    document.getElementById('exportPdfBtn').addEventListener('click', function() {
+        const headers = ['S.L','Name','Mobile','PAN','Caller','Source','Status','Created Date'];
+        const rows = filteredClients.map((c, i) => `<tr>
+            <td>${i + 1}</td>
+            <td>${escHtml(c.name)}</td>
+            <td>${escHtml(c.mobile)}</td>
+            <td>${escHtml(c.pan)}</td>
+            <td>${escHtml(c.caller || '—')}</td>
+            <td>${escHtml(c.source || '—')}</td>
+            <td>${escHtml(c.status || 'Active')}</td>
+            <td>${formatDate(c.createdAt)}</td>
+        </tr>`).join('');
+        document.getElementById('printArea').style.display = 'block';
+        document.getElementById('printArea').innerHTML = `
+            <h5 style="margin-bottom:12px;font-family:sans-serif;">Client List — ${new Date().toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}</h5>
+            <table>
+                <thead><tr>${headers.map(h => `<th>${h}</th>`).join('')}</tr></thead>
+                <tbody>${rows}</tbody>
+            </table>`;
+        window.print();
+        document.getElementById('printArea').style.display = 'none';
+    });
+
+    // ── Face label sync helper ────────────────────────────────
+    function syncFace(selectId, labelId) {
+        const sel = document.getElementById(selectId);
+        const lbl = document.getElementById(labelId);
+        if (sel && lbl) lbl.textContent = sel.options[sel.selectedIndex]?.text || '';
+    }
+
+    // ── Filter listeners ──────────────────────────────────────
+    document.getElementById('searchInput').addEventListener('input', applyFilters);
+    document.getElementById('pageSizeSelect').addEventListener('change', function() {
+        pageSize = parseInt(this.value);
+        syncFace('pageSizeSelect', 'pageSizeFaceLabel');
+        applyFilters();
+    });
+    document.getElementById('filterStatus').addEventListener('change', function() {
+        syncFace('filterStatus', 'filterStatusLabel'); applyFilters();
+    });
+    document.getElementById('filterCaller').addEventListener('change', function() {
+        syncFace('filterCaller', 'filterCallerLabel'); applyFilters();
+    });
+    document.getElementById('filterSource').addEventListener('change', function() {
+        syncFace('filterSource', 'filterSourceLabel'); applyFilters();
+    });
+    document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterStatus').value = '';
+        document.getElementById('filterCaller').value = '';
+        document.getElementById('filterSource').value = '';
+        syncFace('filterStatus',  'filterStatusLabel');
+        syncFace('filterCaller',  'filterCallerLabel');
+        syncFace('filterSource',  'filterSourceLabel');
+        applyFilters();
+    });
+
+    loadFyOptions();
+    loadClients();
+})();
+</script>

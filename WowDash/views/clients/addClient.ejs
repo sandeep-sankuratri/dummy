@@ -1,0 +1,234 @@
+<div class="card h-100 p-0 radius-12">
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+        <h5 class="fw-semibold mb-0">Add Client</h5>
+        <a href="/clients/view-clients" class="btn btn-outline-primary-600 text-sm px-16 py-10 radius-8 d-flex align-items-center gap-2">
+            <iconify-icon icon="iconamoon:eye-light" class="text-md"></iconify-icon>
+            View Clients
+        </a>
+    </div>
+    <div class="card-body p-24">
+        <div class="row justify-content-center">
+            <div class="col-xxl-8 col-xl-10">
+                <div id="formAlert" class="alert d-none mb-20" role="alert"></div>
+                <form id="addClientForm" novalidate>
+                    <div class="row gy-20">
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Name <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" id="f_name" class="form-control radius-8" placeholder="Enter full name">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Email</label>
+                            <input type="email" id="f_email" class="form-control radius-8" placeholder="Enter email address">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                Mobile <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" id="f_mobile" class="form-control radius-8" placeholder="Enter mobile number">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Alternate Mobile</label>
+                            <input type="text" id="f_altMobile" class="form-control radius-8" placeholder="Enter alternate mobile">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">
+                                PAN <span class="text-danger-600">*</span>
+                            </label>
+                            <input type="text" id="f_pan" class="form-control radius-8" placeholder="e.g. ABCDE1234F" maxlength="10" style="text-transform:uppercase">
+                            <div id="pan_feedback" class="d-none mt-6 text-sm text-danger-600 d-flex align-items-center gap-4">
+                                <iconify-icon icon="ep:warning-filled" class="text-md"></iconify-icon>
+                                <span id="pan_feedback_msg"></span>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">ITR Password</label>
+                            <div class="position-relative">
+                                <input type="password" id="f_itrPassword" class="form-control radius-8 pe-40" placeholder="Enter ITR password">
+                                <button type="button" class="position-absolute end-0 top-50 translate-middle-y me-12 border-0 bg-transparent text-secondary-light"
+                                    onclick="togglePass('f_itrPassword','itr_eye')">
+                                    <iconify-icon icon="iconamoon:eye-light" id="itr_eye" class="text-xl"></iconify-icon>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Date of Birth</label>
+                            <input type="date" id="f_dob" class="form-control radius-8">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Aadhar No</label>
+                            <input type="text" id="f_aadhar" class="form-control radius-8" placeholder="Enter 12-digit Aadhar number" maxlength="12">
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Caller <span class="text-danger-600">*</span></label>
+                            <select id="f_caller" class="form-control radius-8 form-select">
+                                <option value="">Select caller</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Source <span class="text-danger-600">*</span></label>
+                            <select id="f_source" class="form-control radius-8 form-select">
+                                <option value="">Select source</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-12">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Remarks</label>
+                            <textarea id="f_remarks" class="form-control radius-8" rows="3" placeholder="Enter any remarks..."></textarea>
+                        </div>
+
+                        <div class="col-12 d-flex align-items-center gap-12 mt-4">
+                            <button type="button" id="submitClientBtn" class="btn btn-primary border border-primary-600 text-md px-48 py-12 radius-8">
+                                Submit
+                            </button>
+                            <button type="reset" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-48 py-11 radius-8">
+                                Reset
+                            </button>
+                        </div>
+
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+(function () {
+    // ── Load dropdowns ───────────────────────────────────────────
+    async function loadDropdowns() {
+        const [empRes, srcRes] = await Promise.all([
+            fetch('/api/employees'),
+            fetch('/api/sources')
+        ]);
+        const employees = await empRes.json();
+        const sources = await srcRes.json();
+
+        const callerSel = document.getElementById('f_caller');
+        employees.filter(e => e.designation === 'Caller' && e.status === 'Active').forEach(e => {
+            const opt = document.createElement('option');
+            opt.value = e.name;
+            opt.textContent = e.name;
+            callerSel.appendChild(opt);
+        });
+
+        const srcSel = document.getElementById('f_source');
+        sources.forEach(s => {
+            const opt = document.createElement('option');
+            opt.value = s.name;
+            opt.textContent = s.name;
+            srcSel.appendChild(opt);
+        });
+    }
+
+    // ── PAN uppercase ────────────────────────────────────────────
+    document.getElementById('f_pan').addEventListener('input', function () {
+        this.value = this.value.toUpperCase();
+        document.getElementById('pan_feedback').classList.add('d-none');
+    });
+
+    // ── ITR password toggle ──────────────────────────────────────
+    window.togglePass = function (inputId, iconId) {
+        const input = document.getElementById(inputId);
+        const icon = document.getElementById(iconId);
+        const isPassword = input.type === 'password';
+        input.type = isPassword ? 'text' : 'password';
+        icon.setAttribute('icon', isPassword ? 'iconamoon:eye-off-light' : 'iconamoon:eye-light');
+    };
+
+    // ── Submit ───────────────────────────────────────────────────
+    document.getElementById('submitClientBtn').addEventListener('click', async function () {
+        const alertEl = document.getElementById('formAlert');
+        const pan_fb = document.getElementById('pan_feedback');
+        const pan_msg = document.getElementById('pan_feedback_msg');
+
+        const name = document.getElementById('f_name').value.trim();
+        const email = document.getElementById('f_email').value.trim();
+        const mobile = document.getElementById('f_mobile').value.trim();
+        const alternateMobile = document.getElementById('f_altMobile').value.trim();
+        const pan = document.getElementById('f_pan').value.trim().toUpperCase();
+        const itrPassword = document.getElementById('f_itrPassword').value;
+        const dob = document.getElementById('f_dob').value;
+        const aadharNo = document.getElementById('f_aadhar').value.trim();
+        const caller = document.getElementById('f_caller').value;
+        const source = document.getElementById('f_source').value;
+        const remarks = document.getElementById('f_remarks').value.trim();
+
+        alertEl.className = 'alert d-none mb-20';
+        pan_fb.classList.add('d-none');
+
+        if (!name) { showAlert('danger', 'Name is required.'); return; }
+        if (!mobile) { showAlert('danger', 'Mobile number is required.'); return; }
+        if (!pan) { showAlert('danger', 'PAN is required.'); return; }
+        if (!caller) { showAlert('danger', 'Caller is required.'); return; }
+        if (!source) { showAlert('danger', 'Source is required.'); return; }
+
+        const btn = this;
+        btn.disabled = true;
+        btn.textContent = 'Submitting...';
+
+        try {
+            const res = await fetch('/api/clients', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, mobile, alternateMobile, pan, itrPassword, dob, aadharNo, caller, source, remarks })
+            });
+            const data = await res.json();
+            if (res.status === 409) {
+                pan_msg.textContent = data.message;
+                pan_fb.classList.remove('d-none');
+                document.getElementById('f_pan').focus();
+                return;
+            }
+            if (!res.ok) throw new Error(data.message);
+            document.getElementById('addClientForm').reset();
+            var successModal = new bootstrap.Modal(document.getElementById('clientSuccessModal'));
+            successModal.show();
+        } catch (e) {
+            showAlert('danger', e.message || 'Failed to add client.');
+        } finally {
+            btn.disabled = false;
+            btn.textContent = 'Submit';
+        }
+    });
+
+    function showAlert(type, msg) {
+        const el = document.getElementById('formAlert');
+        el.className = `alert alert-${type} mb-20`;
+        el.textContent = msg;
+        el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }
+
+    loadDropdowns();
+})();
+
+</script>
+
+<!-- ════ SUCCESS MODAL ════ -->
+<div class="modal fade" id="clientSuccessModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-body p-32 text-center">
+                <div class="w-64-px h-64-px bg-success-100 d-flex align-items-center justify-content-center rounded-circle mx-auto mb-20">
+                    <iconify-icon icon="ep:success-filled" class="text-success-600 text-4xl"></iconify-icon>
+                </div>
+                <h5 class="fw-semibold mb-8">Success!</h5>
+                <p class="text-secondary-light text-sm mb-0">Client added successfully.</p>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 justify-content-center">
+                <button type="button" class="btn btn-primary px-48 py-12 radius-8" id="successOkBtn" onclick="window.location.href='/clients/view-clients'">OK</button>
+            </div>
+        </div>
+    </div>
+</div>

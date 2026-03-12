@@ -1,0 +1,72 @@
+<aside class="sidebar active">
+    <button type="button" class="sidebar-close-btn">
+        <iconify-icon icon="radix-icons:cross-2"></iconify-icon>
+    </button>
+    <div>
+        <a href="/index" class="sidebar-logo">
+            <img src="/images/evotax-logo.png" alt="Evotax" class="light-logo">
+            <img src="/images/evotax-logo.png" alt="Evotax" class="dark-logo">
+            <img src="/images/evotax-logo.png" alt="Evotax" class="logo-icon">
+        </a>
+    </div>
+    <div class="sidebar-menu-area">
+        <ul class="sidebar-menu" id="sidebar-menu">
+            <li>
+                <a href="/index">
+                    <iconify-icon icon="solar:home-smile-angle-outline" class="menu-icon"></iconify-icon>
+                    <span>Dashboard</span>
+                </a>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="flowbite:users-group-outline" class="menu-icon"></iconify-icon>
+                    <span>Clients</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/clients/add-client"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Add Client</a>
+                    </li>
+                    <li>
+                        <a href="/clients/view-clients"><i class="ri-circle-fill circle-icon text-warning-main w-auto"></i> View Clients</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="lucide:briefcase" class="menu-icon"></iconify-icon>
+                    <span>Services</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/services/itr-individual"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> ITR Individual Filing</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="solar:wallet-money-outline" class="menu-icon"></iconify-icon>
+                    <span>Payments</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/payments/itr"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> ITR Payments</a>
+                    </li>
+                </ul>
+            </li>
+            <li class="dropdown">
+                <a href="javascript:void(0)">
+                    <iconify-icon icon="icon-park-outline:setting-two" class="menu-icon"></iconify-icon>
+                    <span>Settings</span>
+                </a>
+                <ul class="sidebar-submenu">
+                    <li>
+                        <a href="/settings/dropdown-management"><i class="ri-circle-fill circle-icon text-success-main w-auto"></i> Dropdown Management</a>
+                    </li>
+                    <li>
+                        <a href="/role-and-access/role-access"><i class="ri-circle-fill circle-icon text-primary-600 w-auto"></i> Role & Access</a>
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+</aside>

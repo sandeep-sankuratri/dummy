@@ -1,0 +1,1462 @@
+<div class="row gy-24">
+
+    <!-- ═══════════════════════════════════════
+         SECTION 1 — CREATE FINANCIAL YEAR
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:calendar-text-outline" class="text-primary-600 text-xl"></iconify-icon>
+                    Create FY
+                </h5>
+            </div>
+            <div class="card-body p-24">
+
+                <!-- Add FY Form -->
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Financial Year <span class="text-danger-600">*</span></label>
+                        <input type="text" id="fy_input" class="form-control radius-8" placeholder="e.g. 2025-26">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="fy_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add FY
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="fy_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+
+                <!-- FY Table -->
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Financial Year</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Status</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fy_tableBody">
+                            <tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- ═══════════════════════════════════════
+         SECTION 2 — INDIVIDUAL ITR FILING TYPE
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:file-document-outline" class="text-secondary-600 text-xl"></iconify-icon>
+                    Individual ITR Filing Type
+                </h5>
+            </div>
+            <div class="card-body p-24">
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Type Name <span class="text-danger-600">*</span></label>
+                        <input type="text" id="itrType_input" class="form-control radius-8" placeholder="e.g. ITR 8">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="itrType_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add Type
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="itrType_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Type Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itrType_tableBody">
+                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SECTION 3 — RETURN OUTCOME
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:check-circle-outline" class="text-success-600 text-xl"></iconify-icon>
+                    Return Outcome
+                </h5>
+            </div>
+            <div class="card-body p-24">
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Outcome Name <span class="text-danger-600">*</span></label>
+                        <input type="text" id="ro_input" class="form-control radius-8" placeholder="e.g. Demand Raised">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                        <input type="color" id="ro_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="ro_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add Outcome
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="ro_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Outcome Name</th>
+                                <th scope="col" class="text-center">Color</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="ro_tableBody">
+                            <tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SECTION 2B — INDIVIDUAL ITR FILING STATUS 2
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:file-document-edit-outline" class="text-warning-600 text-xl"></iconify-icon>
+                    Individual ITR Filing Status 2
+                </h5>
+            </div>
+            <div class="card-body p-24">
+
+                <!-- Tab nav -->
+                <ul class="nav nav-pills mb-20 gap-8" id="s2-tabs" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-sm px-16 py-8" id="s2-caller-tab" data-bs-toggle="pill" data-bs-target="#s2-caller-pane" type="button" role="tab">
+                            <iconify-icon icon="lucide:phone" class="me-1"></iconify-icon> Caller
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-sm px-16 py-8" id="s2-preparer-tab" data-bs-toggle="pill" data-bs-target="#s2-preparer-pane" type="button" role="tab">
+                            <iconify-icon icon="lucide:file-check" class="me-1"></iconify-icon> Tax Preparer
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-sm px-16 py-8" id="s2-common-tab" data-bs-toggle="pill" data-bs-target="#s2-common-pane" type="button" role="tab">
+                            <iconify-icon icon="lucide:users" class="me-1"></iconify-icon> Common
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="s2-tabContent">
+
+                    <!-- ── Caller Tab ── -->
+                    <div class="tab-pane fade show active" id="s2-caller-pane" role="tabpanel">
+                        <div class="row g-16 align-items-end mb-24">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
+                                <input type="text" id="s2c_input" class="form-control radius-8" placeholder="e.g. Pending Documents">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                                <input type="color" id="s2c_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" id="s2c_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                                    Add Status
+                                </button>
+                            </div>
+                            <div class="col-12"><div id="s2c_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <table class="table bordered-table sm-table mb-0">
+                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2c_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ── Tax Preparer Tab ── -->
+                    <div class="tab-pane fade" id="s2-preparer-pane" role="tabpanel">
+                        <div class="row g-16 align-items-end mb-24">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
+                                <input type="text" id="s2p_input" class="form-control radius-8" placeholder="e.g. Estimate Sent">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                                <input type="color" id="s2p_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" id="s2p_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                                    Add Status
+                                </button>
+                            </div>
+                            <div class="col-12"><div id="s2p_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <table class="table bordered-table sm-table mb-0">
+                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2p_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- ── Common Tab ── -->
+                    <div class="tab-pane fade" id="s2-common-pane" role="tabpanel">
+                        <div class="row g-16 align-items-end mb-24">
+                            <div class="col-md-5">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
+                                <input type="text" id="s2o_input" class="form-control radius-8" placeholder="e.g. Completed">
+                            </div>
+                            <div class="col-auto">
+                                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                                <input type="color" id="s2o_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                            </div>
+                            <div class="col-md-3">
+                                <button type="button" id="s2o_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                                    <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                                    Add Status
+                                </button>
+                            </div>
+                            <div class="col-12"><div id="s2o_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div></div>
+                        </div>
+                        <div class="table-responsive scroll-sm">
+                            <table class="table bordered-table sm-table mb-0">
+                                <thead><tr><th>S.L</th><th>Status Name</th><th class="text-center">Color</th><th>Created Date</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2o_tableBody"><tr><td colspan="5" class="text-center py-20 text-secondary-light">Loading...</td></tr></tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SECTION 4 — PAID TO MANAGEMENT
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:bank-transfer-out" class="text-info-600 text-xl"></iconify-icon>
+                    Paid To
+                </h5>
+            </div>
+            <div class="card-body p-24">
+
+                <!-- Add Paid To Form -->
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
+                        <input type="text" id="pt_input" class="form-control radius-8" placeholder="e.g. Sandeep">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="pt_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add Paid To
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="pt_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+
+                <!-- Paid To Table -->
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="pt_tableBody">
+                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SECTION 5 — MODE OF PAYMENT
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:credit-card-outline" class="text-cyan-600 text-xl"></iconify-icon>
+                    Mode of Payment
+                </h5>
+            </div>
+            <div class="card-body p-24">
+
+                <!-- Add Mode of Payment Form -->
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
+                        <input type="text" id="mop_input" class="form-control radius-8" placeholder="e.g. UPI">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="mop_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add Mode
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="mop_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+
+                <!-- Mode of Payment Table -->
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="mop_tableBody">
+                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════════
+         SECTION 3 — SOURCE MANAGEMENT
+    ════════════════════════════════════════ -->
+    <div class="col-12">
+        <div class="card h-100 p-0 radius-12">
+            <div class="card-header border-bottom bg-base py-16 px-24">
+                <h5 class="fw-semibold mb-0 d-flex align-items-center gap-8">
+                    <iconify-icon icon="mdi:source-branch" class="text-danger-600 text-xl"></iconify-icon>
+                    Source
+                </h5>
+            </div>
+            <div class="card-body p-24">
+
+                <!-- Add Source Form -->
+                <div class="row g-16 align-items-end mb-24">
+                    <div class="col-md-5">
+                        <label class="form-label fw-semibold text-primary-light text-sm mb-8">Source Name <span class="text-danger-600">*</span></label>
+                        <input type="text" id="src_input" class="form-control radius-8" placeholder="e.g. Facebook Leads">
+                    </div>
+                    <div class="col-md-3">
+                        <button type="button" id="src_addBtn" class="btn btn-primary text-sm px-24 py-12 radius-8 d-flex align-items-center gap-2">
+                            <iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>
+                            Add Source
+                        </button>
+                    </div>
+                    <div class="col-12">
+                        <div id="src_error" class="alert alert-danger d-none py-8 px-16" role="alert"></div>
+                    </div>
+                </div>
+
+                <!-- Source Table -->
+                <div class="table-responsive scroll-sm">
+                    <table class="table bordered-table sm-table mb-0">
+                        <thead>
+                            <tr>
+                                <th scope="col">S.L</th>
+                                <th scope="col">Source Name</th>
+                                <th scope="col">Created Date</th>
+                                <th scope="col" class="text-center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="src_tableBody">
+                            <tr><td colspan="4" class="text-center py-20 text-secondary-light">Loading...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT FY MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editFyModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit Financial Year</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editFy_id">
+                <div id="editFy_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Financial Year <span class="text-danger-600">*</span></label>
+                <input type="text" id="editFy_name" class="form-control radius-8" placeholder="e.g. 2025-26">
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editFy_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT RETURN OUTCOME MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editRoModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit Return Outcome</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editRo_id">
+                <div id="editRo_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Outcome Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editRo_name" class="form-control radius-8 mb-16" placeholder="e.g. Demand Raised">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                <div class="d-flex align-items-center gap-12">
+                    <input type="color" id="editRo_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                    <span class="text-secondary-light text-sm">Pick a badge color for this outcome</span>
+                </div>
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editRo_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT ITR TYPE MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editItrTypeModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit ITR Filing Type</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editItrType_id">
+                <div id="editItrType_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Type Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editItrType_name" class="form-control radius-8" placeholder="e.g. ITR 8">
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editItrType_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT MODE OF PAYMENT MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editMopModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit Mode of Payment</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editMop_id">
+                <div id="editMop_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editMop_name" class="form-control radius-8" placeholder="e.g. UPI">
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editMop_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT PAID TO MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editPtModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit Paid To</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editPt_id">
+                <div id="editPt_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editPt_name" class="form-control radius-8" placeholder="e.g. Sandeep">
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editPt_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT SOURCE MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editSrcModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit Source</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editSrc_id">
+                <div id="editSrc_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Source Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editSrc_name" class="form-control radius-8" placeholder="e.g. Facebook Leads">
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editSrc_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     EDIT ITR STATUS 2 MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="editS2Modal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header py-16 px-24 border-bottom">
+                <h5 class="modal-title fw-semibold">Edit ITR Status 2</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <input type="hidden" id="editS2_id">
+                <div id="editS2_error" class="alert alert-danger d-none py-8 px-16 mb-16" role="alert"></div>
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Status Name <span class="text-danger-600">*</span></label>
+                <input type="text" id="editS2_name" class="form-control radius-8 mb-16" placeholder="e.g. Pending Documents">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Color</label>
+                <div class="d-flex align-items-center gap-12">
+                    <input type="color" id="editS2_color" value="#3B82F6" class="form-control form-control-color radius-8" style="width:48px;height:42px;padding:2px;">
+                    <span class="text-xs text-secondary-light">Pick a color for this status</span>
+                </div>
+            </div>
+            <div class="modal-footer px-24 py-16 border-top">
+                <button type="button" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="editS2_saveBtn" class="btn btn-primary text-md px-32 py-12 radius-8">Save</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     DELETE CONFIRMATION MODAL
+════════════════════════════════════════ -->
+<div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-body p-24 text-center">
+                <div class="w-56-px h-56-px bg-danger-100 d-flex align-items-center justify-content-center rounded-circle mx-auto mb-16">
+                    <iconify-icon icon="fluent:delete-24-regular" class="text-danger-600 text-3xl"></iconify-icon>
+                </div>
+                <h5 class="fw-semibold mb-8">Confirm Delete</h5>
+                <p class="text-secondary-light text-sm" id="deleteConfirm_msg">Are you sure you want to delete this item?</p>
+                <p class="text-secondary-light text-sm">This action cannot be undone.</p>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 justify-content-center gap-12">
+                <button type="button" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="deleteConfirm_btn" class="btn btn-danger text-md px-32 py-12 radius-8">Delete</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════
+     JAVASCRIPT
+════════════════════════════════════════ -->
+<script>
+(function () {
+    let allFYs = [];
+    let allItrTypes = [];
+    let allReturnOutcomes = [];
+    let allSources = [];
+    let allPaidTos = [];
+    let allModeOfPayments = [];
+    let allS2Options = [];
+    let pendingDelete = null; // { type: 'fy'|'src'|'pt'|'mop'|'s2', id }
+
+    // ── Helpers ──────────────────────────────────────────────────
+    function escHtml(str) {
+        return String(str || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+    }
+
+    function formatDate(iso) {
+        return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function showToast(msg, type) {
+        const div = document.createElement('div');
+        div.className = `alert alert-${type === 'error' ? 'danger' : 'success'} position-fixed top-0 end-0 m-24 shadow-sm`;
+        div.style.cssText = 'min-width:280px;z-index:9999;';
+        div.textContent = msg;
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
+
+    // ════════════════════════════════════════
+    //  FINANCIAL YEARS
+    // ════════════════════════════════════════
+    async function loadFYs() {
+        const res = await fetch('/api/financial-years');
+        allFYs = await res.json();
+        renderFYs();
+    }
+
+    function renderFYs() {
+        const tbody = document.getElementById('fy_tableBody');
+        if (!allFYs.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No financial years found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allFYs.map((fy, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(fy.name)}</span></td>
+                <td>${formatDate(fy.createdAt)}</td>
+                <td class="text-center">
+                    <span class="bg-success-focus text-success-600 border border-success-main px-16 py-4 radius-4 fw-medium text-sm">${escHtml(fy.status)}</span>
+                </td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditFy('${fy.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('fy', '${fy.id}', '${escHtml(fy.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    // Add FY
+    document.getElementById('fy_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('fy_input').value.trim();
+        const errEl = document.getElementById('fy_error');
+        if (!name) {
+            errEl.textContent = 'Please enter a financial year (e.g. 2025-26).';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/financial-years', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('fy_input').value = '';
+            showToast('Financial Year added.', 'success');
+            await loadFYs();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add FY.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add FY';
+        }
+    });
+
+    // Allow Enter key in FY input
+    document.getElementById('fy_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('fy_addBtn').click();
+    });
+
+    // Edit FY
+    window.openEditFy = function (id) {
+        const fy = allFYs.find(f => f.id === id);
+        if (!fy) return;
+        document.getElementById('editFy_id').value = fy.id;
+        document.getElementById('editFy_name').value = fy.name;
+        document.getElementById('editFy_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editFyModal')).show();
+    };
+
+    document.getElementById('editFy_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editFy_id').value;
+        const name = document.getElementById('editFy_name').value.trim();
+        const errEl = document.getElementById('editFy_error');
+        if (!name) { errEl.textContent = 'FY name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/financial-years/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editFyModal')).hide();
+            showToast('Financial Year updated.', 'success');
+            await loadFYs();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  RETURN OUTCOMES
+    // ════════════════════════════════════════
+    async function loadReturnOutcomes() {
+        const res = await fetch('/api/return-outcomes');
+        allReturnOutcomes = await res.json();
+        renderReturnOutcomes();
+    }
+
+    function renderReturnOutcomes() {
+        const tbody = document.getElementById('ro_tableBody');
+        if (!allReturnOutcomes.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No outcomes found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allReturnOutcomes.map((r, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(r.name)}</span></td>
+                <td class="text-center">
+                    ${r.color
+                        ? `<span style="display:inline-block;width:22px;height:22px;border-radius:50%;background:${escHtml(r.color)};border:2px solid rgba(0,0,0,.12);vertical-align:middle;" title="${escHtml(r.color)}"></span>`
+                        : '<span class="text-secondary-light">—</span>'}
+                </td>
+                <td>${formatDate(r.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditRo('${r.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('ro', '${r.id}', '${escHtml(r.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    document.getElementById('ro_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('ro_input').value.trim();
+        const color = document.getElementById('ro_color').value;
+        const errEl = document.getElementById('ro_error');
+        if (!name) {
+            errEl.textContent = 'Please enter an outcome name.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/return-outcomes', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, color })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('ro_input').value = '';
+            document.getElementById('ro_color').value = '#3B82F6';
+            showToast('Outcome added.', 'success');
+            await loadReturnOutcomes();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add outcome.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add Outcome';
+        }
+    });
+
+    document.getElementById('ro_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('ro_addBtn').click();
+    });
+
+    window.openEditRo = function (id) {
+        const r = allReturnOutcomes.find(x => x.id === id);
+        if (!r) return;
+        document.getElementById('editRo_id').value = r.id;
+        document.getElementById('editRo_name').value = r.name;
+        document.getElementById('editRo_color').value = r.color || '#3B82F6';
+        document.getElementById('editRo_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editRoModal')).show();
+    };
+
+    document.getElementById('editRo_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editRo_id').value;
+        const name = document.getElementById('editRo_name').value.trim();
+        const color = document.getElementById('editRo_color').value;
+        const errEl = document.getElementById('editRo_error');
+        if (!name) { errEl.textContent = 'Outcome name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/return-outcomes/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, color })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editRoModal')).hide();
+            showToast('Outcome updated.', 'success');
+            await loadReturnOutcomes();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  ITR TYPES
+    // ════════════════════════════════════════
+    async function loadItrTypes() {
+        const res = await fetch('/api/itr-types');
+        allItrTypes = await res.json();
+        renderItrTypes();
+    }
+
+    function renderItrTypes() {
+        const tbody = document.getElementById('itrType_tableBody');
+        if (!allItrTypes.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No types found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allItrTypes.map((t, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(t.name)}</span></td>
+                <td>${formatDate(t.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditItrType('${t.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('itrtype', '${t.id}', '${escHtml(t.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    document.getElementById('itrType_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('itrType_input').value.trim();
+        const errEl = document.getElementById('itrType_error');
+        if (!name) {
+            errEl.textContent = 'Please enter a type name.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/itr-types', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('itrType_input').value = '';
+            showToast('Type added.', 'success');
+            await loadItrTypes();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add type.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add Type';
+        }
+    });
+
+    document.getElementById('itrType_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('itrType_addBtn').click();
+    });
+
+    window.openEditItrType = function (id) {
+        const t = allItrTypes.find(x => x.id === id);
+        if (!t) return;
+        document.getElementById('editItrType_id').value = t.id;
+        document.getElementById('editItrType_name').value = t.name;
+        document.getElementById('editItrType_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editItrTypeModal')).show();
+    };
+
+    document.getElementById('editItrType_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editItrType_id').value;
+        const name = document.getElementById('editItrType_name').value.trim();
+        const errEl = document.getElementById('editItrType_error');
+        if (!name) { errEl.textContent = 'Type name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/itr-types/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editItrTypeModal')).hide();
+            showToast('Type updated.', 'success');
+            await loadItrTypes();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  SOURCES
+    // ════════════════════════════════════════
+    async function loadSources() {
+        const res = await fetch('/api/sources');
+        allSources = await res.json();
+        renderSources();
+    }
+
+    function renderSources() {
+        const tbody = document.getElementById('src_tableBody');
+        if (!allSources.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No sources found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allSources.map((s, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(s.name)}</span></td>
+                <td>${formatDate(s.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditSrc('${s.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('src', '${s.id}', '${escHtml(s.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    // Add Source
+    document.getElementById('src_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('src_input').value.trim();
+        const errEl = document.getElementById('src_error');
+        if (!name) {
+            errEl.textContent = 'Please enter a source name.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/sources', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('src_input').value = '';
+            showToast('Source added.', 'success');
+            await loadSources();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add source.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add Source';
+        }
+    });
+
+    document.getElementById('src_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('src_addBtn').click();
+    });
+
+    // Edit Source
+    window.openEditSrc = function (id) {
+        const s = allSources.find(x => x.id === id);
+        if (!s) return;
+        document.getElementById('editSrc_id').value = s.id;
+        document.getElementById('editSrc_name').value = s.name;
+        document.getElementById('editSrc_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editSrcModal')).show();
+    };
+
+    document.getElementById('editSrc_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editSrc_id').value;
+        const name = document.getElementById('editSrc_name').value.trim();
+        const errEl = document.getElementById('editSrc_error');
+        if (!name) { errEl.textContent = 'Source name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/sources/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editSrcModal')).hide();
+            showToast('Source updated.', 'success');
+            await loadSources();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  SHARED DELETE CONFIRMATION
+    // ════════════════════════════════════════
+    window.openDeleteConfirm = function (type, id, label) {
+        pendingDelete = { type, id };
+        document.getElementById('deleteConfirm_msg').textContent =
+            `Are you sure you want to delete "${label}"?`;
+        const warningDiv = document.getElementById('deleteConfirm_warning');
+        if (warningDiv) warningDiv.remove();
+        new bootstrap.Modal(document.getElementById('deleteConfirmModal')).show();
+    };
+
+    document.getElementById('deleteConfirm_btn').addEventListener('click', async function () {
+        if (!pendingDelete) return;
+        const { type, id } = pendingDelete;
+        const url = type === 'fy' ? `/api/financial-years/${id}` : type === 'itrtype' ? `/api/itr-types/${id}` : type === 'ro' ? `/api/return-outcomes/${id}` : type === 'src' ? `/api/sources/${id}` : type === 'pt' ? `/api/paid-to/${id}` : type === 's2' ? `/api/itr-status2/${id}` : `/api/mode-of-payment/${id}`;
+        this.disabled = true; this.textContent = 'Deleting...';
+        try {
+            const res = await fetch(url, { method: 'DELETE' });
+            if (res.status === 409) {
+                const data = await res.json();
+                const msgEl = document.getElementById('deleteConfirm_msg');
+                const warningDiv = document.getElementById('deleteConfirm_warning');
+                if (warningDiv) warningDiv.remove();
+                const warning = document.createElement('div');
+                warning.id = 'deleteConfirm_warning';
+                warning.className = 'alert alert-warning text-sm text-start mt-12 mb-0';
+                warning.style.cssText = 'line-height:1.5;';
+                warning.innerHTML = '<iconify-icon icon="lucide:alert-triangle" style="font-size:1rem;vertical-align:-3px;margin-right:4px;"></iconify-icon>' + escHtml(data.message || 'This item is in use and cannot be deleted.');
+                msgEl.parentNode.insertBefore(warning, msgEl.nextSibling.nextSibling);
+                return;
+            }
+            if (!res.ok) throw new Error('Delete failed');
+            bootstrap.Modal.getInstance(document.getElementById('deleteConfirmModal')).hide();
+            showToast('Deleted successfully.', 'success');
+            pendingDelete = null;
+            if (type === 'fy') await loadFYs();
+            else if (type === 'itrtype') await loadItrTypes();
+            else if (type === 'ro') await loadReturnOutcomes();
+            else if (type === 'src') await loadSources();
+            else if (type === 'pt') await loadPaidTos();
+            else if (type === 's2') await loadS2Options();
+            else await loadModeOfPayments();
+        } catch (e) {
+            showToast('Failed to delete.', 'error');
+            pendingDelete = null;
+        } finally {
+            this.disabled = false; this.textContent = 'Delete';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  PAID TO
+    // ════════════════════════════════════════
+    async function loadPaidTos() {
+        const res = await fetch('/api/paid-to');
+        allPaidTos = await res.json();
+        renderPaidTos();
+    }
+
+    function renderPaidTos() {
+        const tbody = document.getElementById('pt_tableBody');
+        if (!allPaidTos.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allPaidTos.map((p, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(p.name)}</span></td>
+                <td>${formatDate(p.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditPt('${p.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('pt', '${p.id}', '${escHtml(p.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    // Add Paid To
+    document.getElementById('pt_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('pt_input').value.trim();
+        const errEl = document.getElementById('pt_error');
+        if (!name) {
+            errEl.textContent = 'Please enter a name.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/paid-to', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('pt_input').value = '';
+            showToast('Added successfully.', 'success');
+            await loadPaidTos();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add Paid To';
+        }
+    });
+
+    document.getElementById('pt_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('pt_addBtn').click();
+    });
+
+    // Edit Paid To
+    window.openEditPt = function (id) {
+        const p = allPaidTos.find(x => x.id === id);
+        if (!p) return;
+        document.getElementById('editPt_id').value = p.id;
+        document.getElementById('editPt_name').value = p.name;
+        document.getElementById('editPt_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editPtModal')).show();
+    };
+
+    document.getElementById('editPt_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editPt_id').value;
+        const name = document.getElementById('editPt_name').value.trim();
+        const errEl = document.getElementById('editPt_error');
+        if (!name) { errEl.textContent = 'Name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/paid-to/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editPtModal')).hide();
+            showToast('Updated successfully.', 'success');
+            await loadPaidTos();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  MODE OF PAYMENT
+    // ════════════════════════════════════════
+    async function loadModeOfPayments() {
+        const res = await fetch('/api/mode-of-payment');
+        allModeOfPayments = await res.json();
+        renderModeOfPayments();
+    }
+
+    function renderModeOfPayments() {
+        const tbody = document.getElementById('mop_tableBody');
+        if (!allModeOfPayments.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = allModeOfPayments.map((m, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(m.name)}</span></td>
+                <td>${formatDate(m.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Edit" onclick="openEditMop('${m.id}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            title="Delete" onclick="openDeleteConfirm('mop', '${m.id}', '${escHtml(m.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>`).join('');
+    }
+
+    // Add Mode of Payment
+    document.getElementById('mop_addBtn').addEventListener('click', async function () {
+        const name = document.getElementById('mop_input').value.trim();
+        const errEl = document.getElementById('mop_error');
+        if (!name) {
+            errEl.textContent = 'Please enter a name.';
+            errEl.classList.remove('d-none');
+            return;
+        }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-lg"></iconify-icon>Adding...';
+        try {
+            const res = await fetch('/api/mode-of-payment', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            document.getElementById('mop_input').value = '';
+            showToast('Added successfully.', 'success');
+            await loadModeOfPayments();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="ic:baseline-plus" class="icon text-xl line-height-1"></iconify-icon>Add Mode';
+        }
+    });
+
+    document.getElementById('mop_input').addEventListener('keydown', function (e) {
+        if (e.key === 'Enter') document.getElementById('mop_addBtn').click();
+    });
+
+    // Edit Mode of Payment
+    window.openEditMop = function (id) {
+        const m = allModeOfPayments.find(x => x.id === id);
+        if (!m) return;
+        document.getElementById('editMop_id').value = m.id;
+        document.getElementById('editMop_name').value = m.name;
+        document.getElementById('editMop_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editMopModal')).show();
+    };
+
+    document.getElementById('editMop_saveBtn').addEventListener('click', async function () {
+        const id = document.getElementById('editMop_id').value;
+        const name = document.getElementById('editMop_name').value.trim();
+        const errEl = document.getElementById('editMop_error');
+        if (!name) { errEl.textContent = 'Name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/mode-of-payment/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editMopModal')).hide();
+            showToast('Updated successfully.', 'success');
+            await loadModeOfPayments();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ════════════════════════════════════════
+    //  ITR STATUS 2 (CALLER / PREPARER / COMMON)
+    // ════════════════════════════════════════
+    async function loadS2Options() {
+        const res = await fetch('/api/itr-status2');
+        allS2Options = await res.json();
+        renderS2Caller();
+        renderS2Preparer();
+        renderS2Common();
+    }
+
+    function colorDot(color) {
+        const c = color || '#9CA3AF';
+        return `<span style="display:inline-block;width:14px;height:14px;border-radius:50%;background:${escHtml(c)};flex-shrink:0;border:1px solid rgba(0,0,0,.1);"></span>`;
+    }
+
+    function renderS2Tab(opts, tbodyId, role) {
+        const tbody = document.getElementById(tbodyId);
+        const filtered = opts.filter(o => o.role === role);
+        if (!filtered.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            return;
+        }
+        tbody.innerHTML = filtered.map((o, i) => `
+            <tr>
+                <td>${String(i + 1).padStart(2, '0')}</td>
+                <td><span class="fw-medium text-primary-light">${escHtml(o.name)}</span></td>
+                <td class="text-center">${colorDot(o.color)}</td>
+                <td>${formatDate(o.createdAt)}</td>
+                <td class="text-center">
+                    <div class="d-flex align-items-center gap-10 justify-content-center">
+                        <button type="button"
+                            class="bg-success-focus text-success-600 bg-hover-success-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            onclick="openEditS2('${escHtml(o.id)}','${escHtml(o.name)}','${escHtml(o.color||'#3B82F6')}')">
+                            <iconify-icon icon="lucide:edit" class="menu-icon"></iconify-icon>
+                        </button>
+                        <button type="button"
+                            class="bg-danger-focus text-danger-600 bg-hover-danger-200 fw-medium w-40-px h-40-px d-flex justify-content-center align-items-center rounded-circle"
+                            onclick="openDeleteConfirm('s2','${escHtml(o.id)}','${escHtml(o.name)}')">
+                            <iconify-icon icon="fluent:delete-24-regular" class="menu-icon"></iconify-icon>
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        `).join('');
+    }
+
+    function renderS2Caller()   { renderS2Tab(allS2Options, 's2c_tableBody', 'caller'); }
+    function renderS2Preparer() { renderS2Tab(allS2Options, 's2p_tableBody', 'preparer'); }
+    function renderS2Common()   { renderS2Tab(allS2Options, 's2o_tableBody', 'common'); }
+
+    async function addS2Option(role, inputId, colorId, errorId) {
+        const input  = document.getElementById(inputId);
+        const colorEl = document.getElementById(colorId);
+        const errEl  = document.getElementById(errorId);
+        const name   = input.value.trim();
+        const color  = colorEl ? colorEl.value : '#3B82F6';
+        if (!name) { errEl.textContent = 'Status name is required.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        try {
+            const res = await fetch('/api/itr-status2', {
+                method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, role, color })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            input.value = '';
+            colorEl.value = '#3B82F6';
+            showToast('Added successfully.', 'success');
+            await loadS2Options();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to add.';
+            errEl.classList.remove('d-none');
+        }
+    }
+
+    document.getElementById('s2c_addBtn').addEventListener('click', () => addS2Option('caller',   's2c_input', 's2c_color', 's2c_error'));
+    document.getElementById('s2p_addBtn').addEventListener('click', () => addS2Option('preparer', 's2p_input', 's2p_color', 's2p_error'));
+    document.getElementById('s2o_addBtn').addEventListener('click', () => addS2Option('common',   's2o_input', 's2o_color', 's2o_error'));
+
+    window.openEditS2 = function(id, name, color) {
+        document.getElementById('editS2_id').value = id;
+        document.getElementById('editS2_name').value = name;
+        document.getElementById('editS2_color').value = color || '#3B82F6';
+        document.getElementById('editS2_error').classList.add('d-none');
+        new bootstrap.Modal(document.getElementById('editS2Modal')).show();
+    };
+
+    document.getElementById('editS2_saveBtn').addEventListener('click', async function () {
+        const id    = document.getElementById('editS2_id').value;
+        const name  = document.getElementById('editS2_name').value.trim();
+        const color = document.getElementById('editS2_color').value;
+        const errEl = document.getElementById('editS2_error');
+        if (!name) { errEl.textContent = 'Name cannot be empty.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true; this.textContent = 'Saving...';
+        try {
+            const res = await fetch(`/api/itr-status2/${id}`, {
+                method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ name, color })
+            });
+            if (!res.ok) throw new Error((await res.json()).message);
+            bootstrap.Modal.getInstance(document.getElementById('editS2Modal')).hide();
+            showToast('Updated successfully.', 'success');
+            await loadS2Options();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to update.';
+            errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false; this.textContent = 'Save';
+        }
+    });
+
+    // ── Init ──────────────────────────────────────────────────────
+    loadFYs();
+    loadItrTypes();
+    loadReturnOutcomes();
+    loadS2Options();
+    loadSources();
+    loadPaidTos();
+    loadModeOfPayments();
+})();
+</script>

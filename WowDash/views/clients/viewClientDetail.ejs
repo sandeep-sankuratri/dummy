@@ -1,0 +1,895 @@
+<%
+var copySvg = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2-2v1"/></svg>';
+var copyBtn = '<button type="button" class="copy-btn" title="Copy" style="border:none;background:transparent;padding:0;color:#cbd5e1;line-height:1;flex-shrink:0;cursor:pointer;display:inline-flex;align-items:center;">' + copySvg + '</button>';
+%>
+<!-- ═══════════════ DEACTIVATE CONFIRMATION MODAL ════════════════ -->
+<div class="modal fade" id="deactivateDetailModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-body p-24 text-center">
+                <div class="w-56-px h-56-px bg-warning-100 d-flex align-items-center justify-content-center rounded-circle mx-auto mb-16">
+                    <iconify-icon icon="lucide:toggle-right" class="text-warning-600 text-3xl"></iconify-icon>
+                </div>
+                <h5 class="fw-semibold mb-8">Deactivate Client</h5>
+                <p class="text-secondary-light text-sm mb-0">Are you sure you want to deactivate this client?</p>
+                <p class="text-secondary-light text-sm">You can reactivate them at any time.</p>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 justify-content-center gap-12">
+                <button type="button" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-32 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmDeactivateDetailBtn" class="btn btn-warning text-md px-32 py-12 radius-8">Deactivate</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ═══════════════ MAIN CARD ════════════════ -->
+<div class="card h-100 p-0 radius-12">
+
+    <!-- Header -->
+    <div class="card-header border-bottom bg-base py-12 px-24 d-flex align-items-center justify-content-between gap-12">
+        <div class="d-flex align-items-center gap-10">
+            <h6 class="fw-semibold mb-0" id="pageTitle">Client Details</h6>
+            <span id="statusBadge" class="badge text-xs fw-semibold px-8 py-4 radius-6 d-none"></span>
+        </div>
+        <div class="d-flex align-items-center gap-8">
+            <!-- View-mode buttons -->
+            <div id="viewModeActions" class="d-flex align-items-center gap-8">
+                <button id="toggleStatusBtn" class="btn text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-1 d-none"></button>
+                <button id="switchToEditBtn" class="btn btn-success text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2">
+                    <iconify-icon icon="lucide:edit" class="text-sm"></iconify-icon>Edit
+                </button>
+            </div>
+            <!-- Edit-mode buttons -->
+            <div id="editModeActions" class="d-none d-flex align-items-center gap-8">
+                <button id="saveEditBtn" class="btn btn-primary text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2">
+                    <iconify-icon icon="lucide:save" class="text-sm"></iconify-icon>Save Changes
+                </button>
+                <button id="cancelEditBtn" class="border border-danger-600 bg-hover-danger-200 text-danger-600 text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2">
+                    <iconify-icon icon="lucide:x" class="text-sm"></iconify-icon>Cancel
+                </button>
+            </div>
+            <a href="/clients/view-clients" class="btn btn-outline-primary-600 text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2">
+                <iconify-icon icon="ep:d-arrow-left" class="text-sm"></iconify-icon>Back to List
+            </a>
+        </div>
+    </div>
+
+    <div class="card-body p-24">
+
+        <!-- Loading -->
+        <div id="loadingState" class="text-center py-56 text-secondary-light">
+            <iconify-icon icon="svg-spinners:ring-resize" class="text-4xl"></iconify-icon>
+            <p class="mt-12 mb-0 text-sm">Loading client details...</p>
+        </div>
+        <!-- Error -->
+        <div id="errorState" class="alert alert-danger d-none" role="alert">
+            Client not found. <a href="/clients/view-clients" class="alert-link">Back to list</a>
+        </div>
+
+        <!-- ══════════════ VIEW MODE ══════════════ -->
+        <div id="viewSection" class="d-none">
+
+            <div id="editError" class="alert alert-danger d-none mb-12" role="alert"></div>
+
+            <!-- Unified inline-edit grid -->
+            <div class="row g-0" id="clientGrid">
+
+                <!-- Full Name -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Full Name <span class="text-danger-600 req-star d-none">*</span></span>
+                    <span id="d_name" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_name" type="text" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="Full name">
+                </div>
+
+                <!-- Added (read-only always) -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Added</span>
+                    <span id="d_createdAt" class="fw-medium text-sm">—</span>
+                </div>
+
+                <!-- Mobile -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Mobile <span class="text-danger-600 req-star d-none">*</span></span>
+                    <span id="d_mobile" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_mobile" type="text" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="Mobile number">
+                </div>
+
+                <!-- Email -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Email</span>
+                    <span id="d_email" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_email" type="email" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="Email address">
+                </div>
+
+                <!-- PAN -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">PAN <span class="text-danger-600 req-star d-none">*</span></span>
+                    <span id="d_pan" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_pan" type="text" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="e.g. ABCDE1234F" maxlength="10" style="text-transform:uppercase">
+                </div>
+
+                <!-- Alternate Mobile -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Alternate Mobile</span>
+                    <span id="d_altMobile" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_altMobile" type="text" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="Alternate mobile">
+                </div>
+
+                <!-- Date of Birth -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Date of Birth</span>
+                    <span id="d_dob" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_dob" type="date" class="edit-inp d-none form-control form-control-sm flex-grow-1">
+                </div>
+
+                <!-- Aadhar No -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Aadhar No</span>
+                    <span id="d_aadhar" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <input id="e_aadhar" type="text" class="edit-inp d-none form-control form-control-sm flex-grow-1" placeholder="12-digit Aadhar" maxlength="12">
+                </div>
+
+                <!-- Caller -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Caller <span class="text-danger-600 req-star d-none">*</span></span>
+                    <span id="d_caller" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <select id="e_caller" class="edit-inp d-none form-control form-control-sm form-select flex-grow-1">
+                        <option value="">Select caller</option>
+                    </select>
+                </div>
+
+                <!-- Source -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Source <span class="text-danger-600 req-star d-none">*</span></span>
+                    <span id="d_source" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <select id="e_source" class="edit-inp d-none form-control form-control-sm form-select flex-grow-1">
+                        <option value="">Select source</option>
+                    </select>
+                </div>
+
+                <!-- Status (read-only in grid; changed via header button) -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Status</span>
+                    <span id="d_status" class="fw-medium text-sm">—</span>
+                </div>
+
+                <!-- ITR Password -->
+                <div class="col-md-6 d-flex align-items-center px-4 py-9 border-bottom">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">ITR Password</span>
+                    <span class="view-val d-flex align-items-center gap-6 flex-grow-1">
+                        <span id="d_itrPassword" class="fw-medium text-sm">—</span>
+                        <button id="itrToggleBtn" type="button" class="border-0 bg-transparent text-secondary-light p-0 d-none" onclick="toggleItrPassword()" title="Show / Hide">
+                            <iconify-icon icon="iconamoon:eye-light" id="itr_detail_eye" class="text-md"></iconify-icon>
+                        </button>
+                        <button type="button" id="itrPasswordCopyBtn" class="copy-btn d-none" title="Copy password" style="border:none;background:transparent;padding:0;color:#cbd5e1;line-height:1;flex-shrink:0;cursor:pointer;display:inline-flex;align-items:center;"><%- copySvg %></button>
+                    </span>
+                    <div class="edit-inp d-none position-relative flex-grow-1">
+                        <input type="password" id="e_itrPassword" class="form-control form-control-sm pe-32" placeholder="ITR password">
+                        <button type="button" class="position-absolute end-0 top-50 translate-middle-y me-8 border-0 bg-transparent text-secondary-light p-0" onclick="toggleEditPass()">
+                            <iconify-icon icon="iconamoon:eye-light" id="e_itr_eye" class="text-md"></iconify-icon>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remarks -->
+                <div class="col-12 d-flex align-items-start px-4 py-9">
+                    <span class="text-secondary-light text-xs flex-shrink-0" style="width:130px">Remarks</span>
+                    <span id="d_remarks" class="view-val fw-medium text-sm flex-grow-1 d-flex align-items-center gap-4"><span class="copy-val">—</span><%- copyBtn %></span>
+                    <textarea id="e_remarks" class="edit-inp d-none form-control form-control-sm flex-grow-1" rows="2" placeholder="Remarks..."></textarea>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- ══════════════ SERVICES SECTION ══════════════ -->
+<div class="card h-100 p-0 radius-12 mt-24" id="servicesSection">
+    <div class="card-header border-bottom bg-base py-16 px-24 d-flex align-items-center justify-content-between">
+        <div class="d-flex align-items-center gap-8">
+            <iconify-icon icon="lucide:briefcase" class="text-primary-600 text-lg"></iconify-icon>
+            <h5 class="fw-semibold mb-0">Services</h5>
+            <span id="servicesCount" class="badge bg-primary-50 text-primary-600 text-xs fw-semibold px-8 py-3 radius-6 d-none">0</span>
+        </div>
+        <button type="button" class="btn btn-primary-600 text-xs px-16 py-8 radius-8 d-inline-flex align-items-center gap-6" data-testid="btn-assign-service" onclick="openAssignServiceModal()">
+            <iconify-icon icon="lucide:plus" class="text-sm"></iconify-icon> Assign Service
+        </button>
+    </div>
+    <div class="card-body p-0" id="servicesBody">
+        <div id="servicesLoading" class="text-center py-40 text-secondary-light">
+            <iconify-icon icon="svg-spinners:ring-resize" class="text-3xl"></iconify-icon>
+            <p class="mt-8 mb-0 text-sm">Loading services...</p>
+        </div>
+        <div id="servicesEmpty" class="text-center py-48 d-none">
+            <div class="d-flex flex-column align-items-center">
+                <div class="w-64-px h-64-px bg-neutral-100 d-flex align-items-center justify-content-center rounded-circle mb-16">
+                    <iconify-icon icon="lucide:briefcase" class="text-3xl text-neutral-400"></iconify-icon>
+                </div>
+                <p class="text-secondary-light text-sm mb-16">No services assigned to this client yet</p>
+                <button type="button" class="btn btn-primary-600 text-xs px-16 py-8 radius-8 d-inline-flex align-items-center gap-6" data-testid="btn-assign-first-service" onclick="openAssignServiceModal()">
+                    <iconify-icon icon="lucide:plus" class="text-sm"></iconify-icon> Assign First Service
+                </button>
+            </div>
+        </div>
+        <div id="servicesError" class="text-center py-48 d-none">
+            <div class="d-flex flex-column align-items-center">
+                <div class="w-64-px h-64-px bg-danger-100 d-flex align-items-center justify-content-center rounded-circle mb-16">
+                    <iconify-icon icon="lucide:alert-triangle" class="text-3xl text-danger-600"></iconify-icon>
+                </div>
+                <p class="text-secondary-light text-sm mb-16">Failed to load services</p>
+                <button type="button" class="btn border border-primary-600 text-primary-600 text-xs px-16 py-8 radius-8 d-inline-flex align-items-center gap-6" onclick="loadServices()">
+                    <iconify-icon icon="lucide:refresh-cw" class="text-sm"></iconify-icon> Retry
+                </button>
+            </div>
+        </div>
+        <div id="servicesContent" class="d-none px-24 py-16" data-testid="services-cards-container"></div>
+    </div>
+</div>
+
+<div class="modal fade" id="assignServiceModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header border-bottom py-16 px-24">
+                <h6 class="fw-semibold mb-0">Assign Service</h6>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body p-24">
+                <div id="assignStep1">
+                    <p class="text-secondary-light text-xs mb-12">Select a service to assign:</p>
+                    <button type="button" class="w-100 btn border border-neutral-200 radius-8 p-16 d-flex align-items-center gap-12 text-start" data-testid="select-itr-service" onclick="selectServiceType('itr')" style="transition:background .15s;" onmouseover="this.style.background='var(--neutral-50)'" onmouseout="this.style.background=''">
+                        <div class="w-40-px h-40-px bg-primary-50 d-flex align-items-center justify-content-center radius-8 flex-shrink-0">
+                            <iconify-icon icon="lucide:file-text" class="text-primary-600 text-xl"></iconify-icon>
+                        </div>
+                        <div>
+                            <span class="fw-semibold text-sm d-block">Individual ITR Filing</span>
+                            <span class="text-xs text-secondary-light">Income tax return filing for individuals</span>
+                        </div>
+                        <iconify-icon icon="lucide:chevron-right" class="text-secondary-light ms-auto text-lg"></iconify-icon>
+                    </button>
+                </div>
+                <div id="assignStep2" class="d-none">
+                    <button type="button" class="btn btn-link text-xs text-secondary-light px-0 mb-12 d-inline-flex align-items-center gap-4" onclick="backToStep1()">
+                        <iconify-icon icon="lucide:arrow-left" class="text-sm"></iconify-icon> Back
+                    </button>
+                    <div class="d-flex align-items-center gap-8 mb-16">
+                        <div class="w-32-px h-32-px bg-primary-50 d-flex align-items-center justify-content-center radius-6 flex-shrink-0">
+                            <iconify-icon icon="lucide:file-text" class="text-primary-600 text-md"></iconify-icon>
+                        </div>
+                        <span class="fw-semibold text-sm">Individual ITR Filing</span>
+                    </div>
+                    <label for="assignFySelect" class="text-xs fw-medium text-secondary-light mb-6 d-block">Financial Year <span class="text-danger-600">*</span></label>
+                    <select id="assignFySelect" class="form-select form-select-sm radius-8 text-sm" data-testid="select-assign-fy">
+                        <option value="">Select Financial Year</option>
+                    </select>
+                    <div id="assignError" class="text-danger-600 text-xs mt-8 d-none" role="alert" aria-live="polite"></div>
+                    <button type="button" id="assignSubmitBtn" class="btn btn-primary-600 text-sm w-100 mt-16 py-10 radius-8" data-testid="btn-submit-assign" onclick="submitAssignService()">
+                        Assign Service
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    const clientId = '<%= clientId %>';
+    let clientData = null;
+    let actualPassword = '';
+    let passwordVisible = false;
+    let callerOptions = [];
+    let sourceOptions = [];
+
+    function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function formatDate(iso) { if (!iso) return '—'; return new Date(iso).toLocaleDateString('en-US', { day: '2-digit', month: 'short', year: 'numeric' }); }
+    function set(id, val) {
+        const el = document.getElementById(id);
+        if (!el) return;
+        const span = el.querySelector('.copy-val');
+        if (span) span.textContent = val || '—';
+        else el.textContent = val || '—';
+    }
+
+    // ── Dropdowns ─────────────────────────────────────────────────
+    async function loadDropdowns(selectedCaller, selectedSource) {
+        if (!callerOptions.length) {
+            const [empRes, srcRes] = await Promise.all([fetch('/api/employees'), fetch('/api/sources')]);
+            callerOptions = (await empRes.json()).filter(e => e.designation === 'Caller' && e.status === 'Active');
+            sourceOptions = await srcRes.json();
+        }
+        const cSel = document.getElementById('e_caller');
+        const sSel = document.getElementById('e_source');
+        cSel.innerHTML = '<option value="">Select caller</option>';
+        callerOptions.forEach(e => { const o = document.createElement('option'); o.value = e.name; o.textContent = e.name; if (e.name === selectedCaller) o.selected = true; cSel.appendChild(o); });
+        sSel.innerHTML = '<option value="">Select source</option>';
+        sourceOptions.forEach(s => { const o = document.createElement('option'); o.value = s.name; o.textContent = s.name; if (s.name === selectedSource) o.selected = true; sSel.appendChild(o); });
+    }
+
+    // ── Render view ───────────────────────────────────────────────
+    function renderView(c) {
+        // Fields
+        set('d_name', c.name || '—');
+        set('d_createdAt', formatDate(c.createdAt));
+        set('d_mobile', c.mobile || '—');
+        set('d_email', c.email || '—');
+        set('d_altMobile', c.alternateMobile || '—');
+        set('d_pan', c.pan);
+        set('d_dob', c.dob || '—');
+        set('d_aadhar', c.aadharNo || '—');
+        set('d_caller', c.caller || '—');
+        set('d_source', c.source || '—');
+        set('d_remarks', c.remarks || '—');
+
+        // Status badge + field
+        const status = c.status || 'Active';
+        const badge = document.getElementById('statusBadge');
+        badge.textContent = status;
+        badge.className = `badge text-xs fw-semibold px-8 py-3 radius-6 lh-1 ${status === 'Active' ? 'bg-success-focus text-success-600' : 'bg-danger-focus text-danger-600'}`;
+        badge.classList.remove('d-none');
+
+        const dStatus = document.getElementById('d_status');
+        if (dStatus) {
+            dStatus.textContent = status;
+            dStatus.className = `fw-semibold text-xs badge lh-1 ${status === 'Active' ? 'bg-success-focus text-success-600' : 'bg-danger-focus text-danger-600'} px-8 py-3 radius-6`;
+        }
+
+        // Toggle button
+        const toggleBtn = document.getElementById('toggleStatusBtn');
+        if (status === 'Active') {
+            toggleBtn.className = 'btn border border-warning-600 bg-hover-warning-200 text-warning-600 text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2';
+            toggleBtn.innerHTML = '<iconify-icon icon="lucide:toggle-right" class="text-sm"></iconify-icon>Deactivate';
+        } else {
+            toggleBtn.className = 'btn border border-success-600 bg-hover-success-200 text-success-600 text-xs px-12 py-6 radius-8 d-inline-flex align-items-center gap-2';
+            toggleBtn.innerHTML = '<iconify-icon icon="lucide:toggle-left" class="text-sm"></iconify-icon>Activate';
+        }
+        toggleBtn.classList.remove('d-none');
+
+        // ITR password
+        actualPassword = c.itrPassword || '';
+        const pwdSpan = document.getElementById('d_itrPassword');
+        const itrToggle = document.getElementById('itrToggleBtn');
+        const itrCopyBtn = document.getElementById('itrPasswordCopyBtn');
+        if (actualPassword) { pwdSpan.textContent = '••••••••'; itrToggle.classList.remove('d-none'); if (itrCopyBtn) itrCopyBtn.classList.remove('d-none'); }
+        else { pwdSpan.textContent = '—'; itrToggle.classList.add('d-none'); if (itrCopyBtn) itrCopyBtn.classList.add('d-none'); }
+        passwordVisible = false;
+        document.getElementById('itr_detail_eye').setAttribute('icon', 'iconamoon:eye-light');
+    }
+
+    // ── Render edit form ──────────────────────────────────────────
+    async function renderEdit(c) {
+        document.getElementById('e_name').value = c.name || '';
+        document.getElementById('e_email').value = c.email || '';
+        document.getElementById('e_mobile').value = c.mobile || '';
+        document.getElementById('e_altMobile').value = c.alternateMobile || '';
+        document.getElementById('e_pan').value = c.pan || '';
+        document.getElementById('e_itrPassword').value = c.itrPassword || '';
+        document.getElementById('e_itrPassword').type = 'password';
+        document.getElementById('e_itr_eye').setAttribute('icon', 'iconamoon:eye-light');
+        document.getElementById('e_dob').value = c.dob || '';
+        document.getElementById('e_aadhar').value = c.aadharNo || '';
+        document.getElementById('e_remarks').value = c.remarks || '';
+        document.getElementById('editError').classList.add('d-none');
+        await loadDropdowns(c.caller, c.source);
+    }
+
+    // ── Mode switching ────────────────────────────────────────────
+    function showViewMode() {
+        document.querySelectorAll('#clientGrid .view-val').forEach(el => el.classList.remove('d-none'));
+        document.querySelectorAll('#clientGrid .edit-inp').forEach(el => el.classList.add('d-none'));
+        document.querySelectorAll('#clientGrid .req-star').forEach(el => el.classList.add('d-none'));
+        document.querySelectorAll('#clientGrid .copy-btn').forEach(el => el.style.display = '');
+        document.getElementById('editError').classList.add('d-none');
+        document.getElementById('viewModeActions').classList.remove('d-none');
+        document.getElementById('editModeActions').classList.add('d-none');
+        document.getElementById('pageTitle').textContent = 'Client Details';
+    }
+    function showEditMode() {
+        document.querySelectorAll('#clientGrid .view-val').forEach(el => el.classList.add('d-none'));
+        document.querySelectorAll('#clientGrid .edit-inp').forEach(el => el.classList.remove('d-none'));
+        document.querySelectorAll('#clientGrid .req-star').forEach(el => el.classList.remove('d-none'));
+        document.querySelectorAll('#clientGrid .copy-btn').forEach(el => el.style.display = 'none');
+        document.getElementById('viewModeActions').classList.add('d-none');
+        const em = document.getElementById('editModeActions');
+        em.classList.remove('d-none');
+        em.classList.add('d-flex');
+        document.getElementById('pageTitle').textContent = 'Edit Client';
+    }
+
+    // ── Load client ───────────────────────────────────────────────
+    async function loadClient() {
+        try {
+            const res = await fetch('/api/clients/' + clientId);
+            if (!res.ok) throw new Error('Not found');
+            clientData = await res.json();
+            renderView(clientData);
+            document.getElementById('loadingState').classList.add('d-none');
+            document.getElementById('viewSection').classList.remove('d-none');
+        } catch (e) {
+            document.getElementById('loadingState').classList.add('d-none');
+            document.getElementById('errorState').classList.remove('d-none');
+        }
+    }
+
+    // ── ITR password toggles ──────────────────────────────────────
+    window.toggleItrPassword = function () {
+        const span = document.getElementById('d_itrPassword');
+        const icon = document.getElementById('itr_detail_eye');
+        passwordVisible = !passwordVisible;
+        span.textContent = passwordVisible ? actualPassword : '••••••••';
+        icon.setAttribute('icon', passwordVisible ? 'iconamoon:eye-off-light' : 'iconamoon:eye-light');
+    };
+    window.toggleEditPass = function () {
+        const inp = document.getElementById('e_itrPassword');
+        const icon = document.getElementById('e_itr_eye');
+        const isPass = inp.type === 'password';
+        inp.type = isPass ? 'text' : 'password';
+        icon.setAttribute('icon', isPass ? 'iconamoon:eye-off-light' : 'iconamoon:eye-light');
+    };
+
+    // ── Copy field handler ────────────────────────────────────────
+    const _COPY_SVG  = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>`;
+    const _CHECK_SVG = `<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>`;
+    document.addEventListener('click', function (e) {
+        const btn = e.target.closest('.copy-btn');
+        if (!btn) return;
+        let text = '';
+        if (btn.id === 'itrPasswordCopyBtn') {
+            text = actualPassword || '';
+        } else {
+            const valSpan = btn.closest('.view-val')?.querySelector('.copy-val');
+            text = valSpan ? valSpan.textContent.trim() : '';
+        }
+        if (!text || text === '—') return;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.innerHTML = _CHECK_SVG;
+            btn.style.color = '#16a34a';
+            setTimeout(() => { btn.innerHTML = _COPY_SVG; btn.style.color = '#cbd5e1'; }, 1500);
+        }).catch(() => {});
+    });
+
+    // ── PAN uppercase ─────────────────────────────────────────────
+    document.getElementById('e_pan').addEventListener('input', function () { this.value = this.value.toUpperCase(); });
+
+    // ── Toggle status ─────────────────────────────────────────────
+    async function doToggle() {
+        try {
+            const res = await fetch('/api/clients/' + clientId + '/toggle-status', { method: 'PATCH' });
+            if (!res.ok) throw new Error('Failed');
+            clientData = await res.json();
+            renderView(clientData);
+        } catch (e) {
+            alert('Failed to update status. Please try again.');
+        }
+    }
+
+    document.getElementById('toggleStatusBtn').addEventListener('click', function () {
+        if (clientData && clientData.status === 'Active') {
+            new bootstrap.Modal(document.getElementById('deactivateDetailModal')).show();
+        } else {
+            doToggle();
+        }
+    });
+
+    document.getElementById('confirmDeactivateDetailBtn').addEventListener('click', async function () {
+        bootstrap.Modal.getInstance(document.getElementById('deactivateDetailModal')).hide();
+        this.disabled = true; this.textContent = 'Deactivating...';
+        await doToggle();
+        this.disabled = false; this.textContent = 'Deactivate';
+    });
+
+    // ── Edit / Cancel / Save ──────────────────────────────────────
+    document.getElementById('switchToEditBtn').addEventListener('click', async function () {
+        if (!clientData) return;
+        await renderEdit(clientData);
+        showEditMode();
+    });
+
+    document.getElementById('cancelEditBtn').addEventListener('click', function () { showViewMode(); });
+
+    document.getElementById('saveEditBtn').addEventListener('click', async function () {
+        const errEl = document.getElementById('editError');
+        const name = document.getElementById('e_name').value.trim();
+        const mobile = document.getElementById('e_mobile').value.trim();
+        const pan = document.getElementById('e_pan').value.trim().toUpperCase();
+        const caller = document.getElementById('e_caller').value;
+        const source = document.getElementById('e_source').value;
+
+        if (!name || !mobile || !pan) { errEl.textContent = 'Name, Mobile and PAN are required.'; errEl.classList.remove('d-none'); return; }
+        if (!caller) { errEl.textContent = 'Caller is required.'; errEl.classList.remove('d-none'); return; }
+        if (!source) { errEl.textContent = 'Source is required.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-md"></iconify-icon>Saving...';
+        try {
+            const res = await fetch('/api/clients/' + clientId, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    name, mobile, pan, caller, source,
+                    email: document.getElementById('e_email').value.trim(),
+                    alternateMobile: document.getElementById('e_altMobile').value.trim(),
+                    itrPassword: document.getElementById('e_itrPassword').value,
+                    dob: document.getElementById('e_dob').value,
+                    aadharNo: document.getElementById('e_aadhar').value.trim(),
+                    remarks: document.getElementById('e_remarks').value.trim(),
+                    status: clientData.status,
+                })
+            });
+            const data = await res.json();
+            if (res.status === 409) { errEl.textContent = data.message; errEl.classList.remove('d-none'); return; }
+            if (!res.ok) throw new Error(data.message);
+            clientData = data;
+            renderView(clientData);
+            showViewMode();
+        } catch (e) {
+            errEl.textContent = e.message || 'Failed to save.';
+            errEl.classList.remove('d-none');
+        } finally {
+            btn.disabled = false;
+            btn.innerHTML = '<iconify-icon icon="lucide:save" class="text-sm"></iconify-icon>Save Changes';
+        }
+    });
+
+    function filingStatusColor(status) {
+        const s = (status || '').toLowerCase();
+        if (['completed', 'filed'].includes(s)) return 'bg-success-focus text-success-600';
+        if (['cancelled', 'on-hold', 'on hold'].includes(s)) return 'bg-danger-focus text-danger-600';
+        return 'bg-warning-focus text-warning-600';
+    }
+
+    function paymentStatusBadge(ps) {
+        if (ps === 'Paid')    return '<span class="badge text-xs fw-semibold px-8 py-3 radius-6 bg-success-focus text-success-600">Paid</span>';
+        if (ps === 'Partial') return '<span class="badge text-xs fw-semibold px-8 py-3 radius-6 bg-warning-focus text-warning-600">Partial</span>';
+        if (ps === 'Unpaid')  return '<span class="badge text-xs fw-semibold px-8 py-3 radius-6 bg-danger-focus text-danger-600">Unpaid</span>';
+        return '<span class="text-xs text-secondary-light">—</span>';
+    }
+
+    function paymentStatusBadgeEl(ps) {
+        var badgeClass = '';
+        var label = '';
+        if (ps === 'Paid')    { badgeClass = 'badge text-xs fw-semibold px-8 py-3 radius-6 bg-success-focus text-success-600'; label = 'Paid'; }
+        else if (ps === 'Partial') { badgeClass = 'badge text-xs fw-semibold px-8 py-3 radius-6 bg-warning-focus text-warning-600'; label = 'Partial'; }
+        else if (ps === 'Unpaid')  { badgeClass = 'badge text-xs fw-semibold px-8 py-3 radius-6 bg-danger-focus text-danger-600'; label = 'Unpaid'; }
+        else return null;
+        return createEl('span', { className: badgeClass, textContent: label });
+    }
+
+    function formatCurrency(val) {
+        if (!val || val <= 0) return '—';
+        return '₹' + val.toLocaleString('en-IN');
+    }
+
+    function formatShortDate(iso) {
+        if (!iso) return '—';
+        return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' });
+    }
+
+    function createEl(tag, attrs, children) {
+        var el = document.createElement(tag);
+        if (attrs) Object.keys(attrs).forEach(function(k) {
+            if (k === 'className') el.className = attrs[k];
+            else if (k === 'style') el.style.cssText = attrs[k];
+            else if (k === 'textContent') el.textContent = attrs[k];
+            else el.setAttribute(k, attrs[k]);
+        });
+        if (children) children.forEach(function(c) { if (c) el.appendChild(c); });
+        return el;
+    }
+
+    function makeInfoItem(label, value) {
+        var wrap = createEl('span', { className: 'text-xs' });
+        var lbl = createEl('span', { className: 'text-secondary-light', textContent: label + ': ' });
+        var val = createEl('span', { className: 'fw-medium text-primary-light', textContent: value || '—' });
+        wrap.appendChild(lbl);
+        wrap.appendChild(val);
+        return wrap;
+    }
+
+    function makeDot() {
+        return createEl('span', { className: 'text-secondary-light text-xs', textContent: ' · ' });
+    }
+
+    function makePill(iconName, label, value, extraClass) {
+        var pill = createEl('span', {
+            className: 'd-inline-flex align-items-center gap-4 px-8 py-3 radius-6 ' + (extraClass || ''),
+            style: 'background:#f1f5f9;font-size:.72rem;line-height:1.3;'
+        });
+        if (iconName) {
+            var ic = document.createElement('iconify-icon');
+            ic.setAttribute('icon', iconName);
+            ic.style.cssText = 'font-size:.8rem;color:#64748b;flex-shrink:0;';
+            pill.appendChild(ic);
+        }
+        var lbl = createEl('span', { className: 'text-secondary-light', textContent: label + ':' });
+        var val = createEl('span', { className: 'fw-semibold text-primary-light', textContent: value || '—' });
+        pill.appendChild(lbl);
+        pill.appendChild(val);
+        return pill;
+    }
+
+    function makePersonChip(label, value) {
+        var chip = createEl('span', {
+            className: 'd-inline-flex align-items-center gap-4',
+            style: 'font-size:.72rem;line-height:1.3;'
+        });
+        var ic = document.createElement('iconify-icon');
+        ic.setAttribute('icon', 'lucide:user');
+        ic.style.cssText = 'font-size:.75rem;color:#94a3b8;flex-shrink:0;';
+        chip.appendChild(ic);
+        var lbl = createEl('span', { className: 'text-secondary-light', textContent: label + ':' });
+        var val = createEl('span', { className: 'fw-medium text-primary-light', textContent: value || '—' });
+        chip.appendChild(lbl);
+        chip.appendChild(val);
+        return chip;
+    }
+
+    function buildServiceCard(f) {
+        var status = f.filingStatus || '—';
+        var statusClass = filingStatusColor(status);
+        var safeId = encodeURIComponent(f.id);
+        var linkHref = '/services/itr-individual/' + safeId;
+
+        var fyLabel = createEl('span', { className: 'fw-bold text-sm text-primary-light', textContent: f.financialYear || '—' });
+        var statusBadge = createEl('span', { className: 'badge text-xs fw-semibold px-8 py-3 radius-6 ' + statusClass, textContent: status });
+        var payBadge = paymentStatusBadgeEl(f.paymentStatus);
+
+        var headerLeft = createEl('div', { className: 'd-flex align-items-center gap-8 flex-wrap' });
+        headerLeft.appendChild(fyLabel);
+        headerLeft.appendChild(statusBadge);
+        if (payBadge) headerLeft.appendChild(payBadge);
+
+        var viewBtn = createEl('a', {
+            href: linkHref,
+            className: 'd-inline-flex align-items-center gap-4 text-primary-600 fw-semibold',
+            style: 'font-size:.72rem;text-decoration:none;',
+            'data-testid': 'service-link-' + f.id,
+            'aria-label': 'View filing details'
+        });
+        viewBtn.textContent = 'View';
+        var arrowIcon = document.createElement('iconify-icon');
+        arrowIcon.setAttribute('icon', 'lucide:arrow-right');
+        arrowIcon.style.fontSize = '.8rem';
+        viewBtn.appendChild(arrowIcon);
+
+        var header = createEl('div', { className: 'd-flex align-items-center justify-content-between mb-12', style: 'padding-bottom:10px;border-bottom:1px solid #f1f5f9;' }, [headerLeft, viewBtn]);
+
+        var detailRow = createEl('div', { className: 'd-flex flex-wrap align-items-center gap-6 mb-10' }, [
+            makePill('lucide:file-text', 'ITR', f.itrType || '—'),
+            makePill('lucide:send', 'Filing', f.filingType || '—'),
+            makePill('lucide:target', 'Outcome', f.returnOutcome || '—')
+        ]);
+
+        var peopleRow = createEl('div', { className: 'd-flex flex-wrap align-items-center gap-10 mb-10', style: 'padding:6px 0;' }, [
+            makePersonChip('Caller', f.caller),
+            makePersonChip('Preparer', f.preparer),
+            makePersonChip('Manager', f.manager)
+        ]);
+
+        var feeStr = f.fee > 0 ? formatCurrency(f.fee) : '—';
+        var paidStr = f.totalPaid > 0 ? formatCurrency(f.totalPaid) : '—';
+        var balanceStr = f.balance != 0 ? formatCurrency(Math.abs(f.balance)) : '₹0';
+
+        var feeStrip = createEl('div', {
+            className: 'd-flex flex-wrap align-items-center gap-12',
+            style: 'padding:8px 12px;background:#f8fafc;border-radius:6px;font-size:.72rem;'
+        });
+        var feeIcon = document.createElement('iconify-icon');
+        feeIcon.setAttribute('icon', 'lucide:indian-rupee');
+        feeIcon.style.cssText = 'font-size:.8rem;color:#64748b;flex-shrink:0;';
+        feeStrip.appendChild(feeIcon);
+
+        var feeItem = createEl('span', { className: 'd-inline-flex align-items-center gap-4' });
+        feeItem.appendChild(createEl('span', { className: 'text-secondary-light', textContent: 'Fee:' }));
+        feeItem.appendChild(createEl('span', { className: 'fw-semibold text-primary-light', textContent: feeStr }));
+        feeStrip.appendChild(feeItem);
+
+        feeStrip.appendChild(createEl('span', { className: 'text-secondary-light', textContent: '·' }));
+
+        var paidItem = createEl('span', { className: 'd-inline-flex align-items-center gap-4' });
+        paidItem.appendChild(createEl('span', { className: 'text-secondary-light', textContent: 'Paid:' }));
+        paidItem.appendChild(createEl('span', { className: 'fw-semibold text-success-600', textContent: paidStr }));
+        feeStrip.appendChild(paidItem);
+
+        feeStrip.appendChild(createEl('span', { className: 'text-secondary-light', textContent: '·' }));
+
+        var balItem = createEl('span', { className: 'd-inline-flex align-items-center gap-4' });
+        balItem.appendChild(createEl('span', { className: 'text-secondary-light', textContent: 'Balance:' }));
+        balItem.appendChild(createEl('span', {
+            className: f.balance > 0 ? 'fw-bold text-danger-600' : 'fw-semibold text-primary-light',
+            textContent: balanceStr
+        }));
+        feeStrip.appendChild(balItem);
+
+        var card = createEl('div', {
+            className: 'border radius-10 mb-12 overflow-hidden',
+            style: 'cursor:pointer;transition:background .15s,box-shadow .15s,border-color .15s;',
+            'data-testid': 'service-card-' + f.id,
+            tabindex: '0'
+        });
+
+        var cardInner = createEl('div', { style: 'padding:14px 16px;' }, [header, detailRow, peopleRow, feeStrip]);
+        card.appendChild(cardInner);
+
+        card.addEventListener('mouseover', function() { this.style.background = '#fafbfc'; this.style.boxShadow = '0 2px 8px rgba(0,0,0,.06)'; this.style.borderColor = '#cbd5e1'; });
+        card.addEventListener('mouseout', function() { this.style.background = ''; this.style.boxShadow = ''; this.style.borderColor = ''; });
+        card.addEventListener('click', function(e) {
+            if (e.target.closest('a')) return;
+            window.location.href = linkHref;
+        });
+        card.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); window.location.href = linkHref; }
+        });
+
+        return card;
+    }
+
+    async function loadServices() {
+        var loadingEl = document.getElementById('servicesLoading');
+        var emptyEl = document.getElementById('servicesEmpty');
+        var errorEl = document.getElementById('servicesError');
+        var contentEl = document.getElementById('servicesContent');
+        var countEl = document.getElementById('servicesCount');
+
+        loadingEl.classList.remove('d-none');
+        emptyEl.classList.add('d-none');
+        errorEl.classList.add('d-none');
+        contentEl.classList.add('d-none');
+        countEl.classList.add('d-none');
+
+        try {
+            var res = await fetch('/api/clients/' + clientId + '/itr-filings');
+            if (!res.ok) throw new Error('Failed to load services');
+            var filings = await res.json();
+
+            loadingEl.classList.add('d-none');
+
+            if (!filings.length) {
+                emptyEl.classList.remove('d-none');
+                return;
+            }
+
+            countEl.textContent = filings.length;
+            countEl.classList.remove('d-none');
+
+            filings.sort(function(a, b) {
+                return (b.financialYear || '').localeCompare(a.financialYear || '');
+            });
+
+            var yearGroups = {};
+            filings.forEach(function(f) {
+                var ad = f.assignedDate || '';
+                var year = ad ? new Date(ad).getFullYear().toString() : 'Unknown';
+                if (!yearGroups[year]) yearGroups[year] = [];
+                yearGroups[year].push(f);
+            });
+
+            var sortedYears = Object.keys(yearGroups).sort(function(a, b) { return b.localeCompare(a); });
+
+            contentEl.innerHTML = '';
+
+            sortedYears.forEach(function(year) {
+                var yearHeader = createEl('div', {
+                    className: 'fw-semibold text-sm text-secondary-light text-uppercase mb-12 mt-8',
+                    style: 'letter-spacing:.5px;',
+                    'data-testid': 'year-group-' + year
+                });
+                yearHeader.textContent = year;
+                contentEl.appendChild(yearHeader);
+
+                var serviceTypes = {};
+                yearGroups[year].forEach(function(f) {
+                    var type = 'Individual ITR';
+                    if (!serviceTypes[type]) serviceTypes[type] = [];
+                    serviceTypes[type].push(f);
+                });
+
+                Object.keys(serviceTypes).forEach(function(type) {
+                    var typeHeader = createEl('div', { className: 'd-flex align-items-center gap-6 mb-8' }, [
+                        (function() { var ic = document.createElement('iconify-icon'); ic.setAttribute('icon', 'lucide:file-text'); ic.className = 'text-primary-600 text-sm'; return ic; })(),
+                        createEl('span', { className: 'fw-medium text-xs text-primary-light', textContent: type })
+                    ]);
+                    contentEl.appendChild(typeHeader);
+
+                    serviceTypes[type].forEach(function(f) {
+                        contentEl.appendChild(buildServiceCard(f));
+                    });
+                });
+            });
+
+            contentEl.classList.remove('d-none');
+        } catch (e) {
+            loadingEl.classList.add('d-none');
+            errorEl.classList.remove('d-none');
+        }
+    }
+
+    let assignModal = null;
+    let fyOptions = null;
+
+    window.openAssignServiceModal = function() {
+        if (!assignModal) assignModal = new bootstrap.Modal(document.getElementById('assignServiceModal'));
+        document.getElementById('assignStep1').classList.remove('d-none');
+        document.getElementById('assignStep2').classList.add('d-none');
+        document.getElementById('assignError').classList.add('d-none');
+        var sel = document.getElementById('assignFySelect');
+        if (sel) sel.selectedIndex = 0;
+        fyOptions = null;
+        assignModal.show();
+    };
+
+    window.selectServiceType = async function(type) {
+        document.getElementById('assignStep1').classList.add('d-none');
+        document.getElementById('assignStep2').classList.remove('d-none');
+        var errEl = document.getElementById('assignError');
+        errEl.classList.add('d-none');
+        var sel = document.getElementById('assignFySelect');
+        if (!fyOptions) {
+            sel.innerHTML = '<option value="">Loading...</option>';
+            try {
+                var r = await fetch('/api/financial-years');
+                if (!r.ok) throw new Error('Failed to load financial years');
+                fyOptions = await r.json();
+            } catch(e) {
+                fyOptions = [];
+                errEl.textContent = 'Could not load financial years. Please try again.';
+                errEl.classList.remove('d-none');
+            }
+        }
+        sel.innerHTML = '<option value="">Select Financial Year</option>';
+        var activeFys = fyOptions.filter(function(fy) { return fy.status === 'Active'; });
+        activeFys.forEach(function(fy) {
+            var opt = document.createElement('option');
+            opt.value = fy.name;
+            opt.textContent = fy.name;
+            sel.appendChild(opt);
+        });
+        if (!activeFys.length && !errEl.textContent) {
+            errEl.textContent = 'No financial years available.';
+            errEl.classList.remove('d-none');
+        }
+    };
+
+    window.backToStep1 = function() {
+        document.getElementById('assignStep1').classList.remove('d-none');
+        document.getElementById('assignStep2').classList.add('d-none');
+    };
+
+    window.submitAssignService = async function() {
+        const fy = document.getElementById('assignFySelect').value;
+        const errEl = document.getElementById('assignError');
+        const btn = document.getElementById('assignSubmitBtn');
+        errEl.classList.add('d-none');
+        if (!fy) { errEl.textContent = 'Please select a Financial Year'; errEl.classList.remove('d-none'); return; }
+        btn.disabled = true;
+        btn.innerHTML = '<span class="d-flex align-items-center justify-content-center gap-6"><iconify-icon icon="svg-spinners:ring-resize"></iconify-icon> Assigning...</span>';
+        try {
+            const r = await fetch('/api/itr-filings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clientId: clientId, financialYear: fy })
+            });
+            const data = await r.json();
+            if (!r.ok) { errEl.textContent = data.message || 'Failed to assign service'; errEl.classList.remove('d-none'); btn.disabled = false; btn.textContent = 'Assign Service'; return; }
+            if (assignModal) assignModal.hide();
+            btn.disabled = false;
+            btn.textContent = 'Assign Service';
+            loadServices();
+        } catch(e) {
+            errEl.textContent = 'Something went wrong. Please try again.';
+            errEl.classList.remove('d-none');
+            btn.disabled = false;
+            btn.textContent = 'Assign Service';
+        }
+    };
+
+    loadClient();
+    loadServices();
+})();
+</script>

@@ -1,0 +1,565 @@
+<style>
+@media print {
+    body * { visibility: hidden; }
+    #payPrintArea, #payPrintArea * { visibility: visible; }
+    #payPrintArea { position: absolute; top: 0; left: 0; width: 100%; }
+    #payPrintArea table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    #payPrintArea th, #payPrintArea td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+    #payPrintArea th { background: #f1f5f9; }
+}
+.stat-card {
+    border-radius: 12px;
+    padding: 20px 20px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.stat-icon {
+    width: 44px; height: 44px;
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.3rem;
+    flex-shrink: 0;
+}
+.csel-wrap {
+    position: relative; display: inline-flex; align-items: center; height: 34px;
+}
+.csel-wrap select {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    opacity: 0; cursor: pointer; z-index: 2; font-size: .75rem;
+}
+.csel-face {
+    display: inline-flex; align-items: center; justify-content: space-between;
+    gap: 6px; height: 34px; border: 1px solid #d1d5db; border-radius: 8px;
+    padding: 0 10px; font-size: .75rem; background: var(--bg-base, #fff);
+    color: inherit; white-space: nowrap; pointer-events: none; width: 100%;
+}
+.csel-face .csel-arrow { font-size: .65rem; flex-shrink: 0; opacity: .55; }
+.csel-wrap select:focus + .csel-face { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.15); }
+.pay-date-input {
+    height: 34px; border: 1px solid #d1d5db; border-radius: 8px;
+    padding: 0 10px; font-size: .75rem; background: var(--bg-base, #fff);
+    color: inherit; outline: none;
+}
+.pay-date-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.15); }
+.pay-table td { vertical-align: middle; }
+.hover-row:hover { background: var(--bg-neutral-50, #f8fafc); }
+</style>
+
+<!-- Print area -->
+<div id="payPrintArea" style="display:none;">
+    <h3 style="margin-bottom:12px;">ITR Payments Report</h3>
+    <table><thead id="payPrintHead"></thead><tbody id="payPrintBody"></tbody></table>
+</div>
+
+
+<!-- ═══ STAT CARDS ═══ -->
+<div class="row g-16 mb-24">
+
+    <div class="col-xxl-3 col-sm-6">
+        <div class="card stat-card h-100">
+            <div class="d-flex align-items-center gap-16 mb-12">
+                <div class="stat-icon bg-primary-light">
+                    <iconify-icon icon="solar:document-text-outline" class="text-primary-600"></iconify-icon>
+                </div>
+                <div>
+                    <div class="text-secondary-light text-xs fw-medium mb-2">Total Filings</div>
+                    <div class="fw-bold text-xl" id="statTotalFilings">—</div>
+                </div>
+            </div>
+            <div class="d-flex gap-8 flex-wrap">
+                <span class="badge bg-success-focus text-success-600 text-xs px-10 py-4 radius-8">
+                    <span id="statPaidCount">0</span> Paid
+                </span>
+                <span class="badge bg-warning-focus text-warning-600 text-xs px-10 py-4 radius-8">
+                    <span id="statPartialCount">0</span> Partial
+                </span>
+                <span class="badge bg-danger-focus text-danger-600 text-xs px-10 py-4 radius-8">
+                    <span id="statUnpaidCount">0</span> Unpaid
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+        <div class="card stat-card h-100">
+            <div class="d-flex align-items-center gap-16 mb-8">
+                <div class="stat-icon bg-info-focus">
+                    <iconify-icon icon="solar:bill-list-outline" class="text-info-600"></iconify-icon>
+                </div>
+                <div>
+                    <div class="text-secondary-light text-xs fw-medium mb-2">Total Fee Charged</div>
+                    <div class="fw-bold text-xl" id="statTotalFee">—</div>
+                </div>
+            </div>
+            <div class="text-secondary-light text-xs">
+                Discount: <span class="text-warning-600 fw-semibold" id="statTotalDiscount">₹0</span>
+                &nbsp;·&nbsp;
+                Net: <span class="text-primary-600 fw-semibold" id="statNetFee">₹0</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+        <div class="card stat-card h-100">
+            <div class="d-flex align-items-center gap-16 mb-8">
+                <div class="stat-icon bg-success-focus">
+                    <iconify-icon icon="solar:wallet-money-outline" class="text-success-600"></iconify-icon>
+                </div>
+                <div>
+                    <div class="text-secondary-light text-xs fw-medium mb-2">Total Collected</div>
+                    <div class="fw-bold text-xl text-success-600" id="statTotalPaid">—</div>
+                </div>
+            </div>
+            <div class="progress" style="height:6px;border-radius:8px;">
+                <div id="collectProgress" class="progress-bar bg-success-600 rounded-pill" style="width:0%"></div>
+            </div>
+            <div class="text-secondary-light text-xs mt-4">
+                <span id="collectPct">0%</span> of net fee collected
+            </div>
+        </div>
+    </div>
+
+    <div class="col-xxl-3 col-sm-6">
+        <div class="card stat-card h-100">
+            <div class="d-flex align-items-center gap-16 mb-8">
+                <div class="stat-icon bg-danger-focus">
+                    <iconify-icon icon="solar:bill-cross-outline" class="text-danger-600"></iconify-icon>
+                </div>
+                <div>
+                    <div class="text-secondary-light text-xs fw-medium mb-2">Outstanding Balance</div>
+                    <div class="fw-bold text-xl text-danger-600" id="statTotalBalance">—</div>
+                </div>
+            </div>
+            <div class="progress" style="height:6px;border-radius:8px;">
+                <div id="balanceProgress" class="progress-bar bg-danger-600 rounded-pill" style="width:0%"></div>
+            </div>
+            <div class="text-secondary-light text-xs mt-4">
+                <span id="balancePct">0%</span> of net fee pending
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<!-- ═══ TABLE CARD ═══ -->
+<div class="card h-100 p-0 radius-12">
+
+    <!-- Card Header -->
+    <div class="card-header border-bottom bg-base py-12 px-20 d-flex align-items-center gap-8 justify-content-between flex-nowrap">
+
+        <!-- Left: filters -->
+        <div class="d-flex align-items-center flex-wrap gap-8">
+
+            <!-- Page size -->
+            <div class="csel-wrap" style="width:66px;">
+                <select id="pageSizeSelect">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <div class="csel-face">
+                    <span id="pageSizeFaceLabel">10</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <form class="navbar-search mb-0" onsubmit="return false;">
+                <input type="text" id="searchInput" class="bg-base"
+                    placeholder="Search client, PAN…"
+                    style="height:34px;padding-left:32px;font-size:.75rem;min-width:180px;">
+                <iconify-icon icon="ion:search-outline" class="icon" style="font-size:.85rem;top:50%;transform:translateY(-50%);"></iconify-icon>
+            </form>
+
+            <!-- FY filter -->
+            <div class="csel-wrap" style="width:116px;">
+                <select id="filterFY"><option value="">All FY</option></select>
+                <div class="csel-face">
+                    <span id="filterFYLabel">All FY</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Caller filter -->
+            <div class="csel-wrap" style="width:120px;">
+                <select id="filterCaller"><option value="">All Callers</option></select>
+                <div class="csel-face">
+                    <span id="filterCallerLabel">All Callers</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Payment Status filter -->
+            <div class="csel-wrap" style="width:120px;">
+                <select id="filterPayStatus">
+                    <option value="">All Status</option>
+                    <option value="Paid">Paid</option>
+                    <option value="Partial">Partial</option>
+                    <option value="Unpaid">Unpaid</option>
+                    <option value="—">No Fee</option>
+                </select>
+                <div class="csel-face">
+                    <span id="filterPayStatusLabel">All Status</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Paid To filter -->
+            <div class="csel-wrap" style="width:130px;">
+                <select id="filterPaidTo"><option value="">All Paid To</option></select>
+                <div class="csel-face">
+                    <span id="filterPaidToLabel">All Paid To</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Mode of Payment filter -->
+            <div class="csel-wrap" style="width:140px;">
+                <select id="filterMode"><option value="">All Modes</option></select>
+                <div class="csel-face">
+                    <span id="filterModeLabel">All Modes</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- From Date -->
+            <input type="date" id="filterDateFrom" class="pay-date-input" title="Payment From Date" style="width:136px;">
+
+            <!-- To Date -->
+            <input type="date" id="filterDateTo" class="pay-date-input" title="Payment To Date" style="width:136px;">
+
+            <!-- Clear -->
+            <button type="button" id="clearFiltersBtn"
+                class="btn border border-secondary-light text-secondary-light text-xs radius-8 d-none d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 10px;white-space:nowrap;">
+                <iconify-icon icon="lucide:x" style="font-size:.7rem;"></iconify-icon>Clear
+            </button>
+        </div>
+
+        <!-- Right: CSV / PDF -->
+        <div class="d-flex align-items-center gap-6 flex-shrink-0">
+            <button type="button" id="exportCsvBtn"
+                class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 12px;white-space:nowrap;">
+                <iconify-icon icon="lucide:file-spreadsheet" style="font-size:.85rem;"></iconify-icon>CSV
+            </button>
+            <button type="button" id="exportPdfBtn"
+                class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-1"
+                style="height:34px;padding:0 12px;white-space:nowrap;">
+                <iconify-icon icon="lucide:file-text" style="font-size:.85rem;"></iconify-icon>PDF
+            </button>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body p-0">
+        <div class="table-responsive scroll-sm">
+            <table class="table bordered-table sm-table mb-0 pay-table">
+                <thead>
+                    <tr>
+                        <th class="ps-20">S.L</th>
+                        <th>Client</th>
+                        <th>PAN</th>
+                        <th>FY</th>
+                        <th>Caller</th>
+                        <th>Filing Status</th>
+                        <th class="text-end">Fee (₹)</th>
+                        <th class="text-end">Discount (₹)</th>
+                        <th class="text-end">Net Fee (₹)</th>
+                        <th class="text-end">Collected (₹)</th>
+                        <th class="text-end">Balance (₹)</th>
+                        <th>Payment Status</th>
+                    </tr>
+                </thead>
+                <tbody id="payTableBody">
+                    <tr><td colspan="12" class="text-center text-secondary-light py-32">Loading…</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-20 py-16 border-top">
+            <span id="paginationInfo" class="text-secondary-light text-sm"></span>
+            <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0" id="paginationList"></ul>
+        </div>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    let allRows = [];
+    let filtered = [];
+    let currentPage = 1;
+    let pageSize = 10;
+
+    // ── Helpers ─────────────────────────────────────────────────────
+    function esc(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmt(n) { return '₹' + Number(n || 0).toLocaleString('en-IN', { minimumFractionDigits: 0, maximumFractionDigits: 0 }); }
+    function fmtDate(iso) { if (!iso) return '—'; return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+
+    function syncFace(selId, lblId) {
+        const sel = document.getElementById(selId);
+        const lbl = document.getElementById(lblId);
+        if (sel && lbl) lbl.textContent = sel.options[sel.selectedIndex]?.text || '';
+    }
+
+    const filingColors = {
+        'Opened': 'bg-neutral-200 text-secondary-light',
+        'Interested': 'bg-info-focus text-info-600',
+        'Document Pending': 'bg-warning-focus text-warning-600',
+        'Under Review': 'bg-primary-light text-primary-600',
+        'Filed': 'bg-success-focus text-success-600',
+        'Completed': 'bg-success-focus text-success-main',
+    };
+    function filingBadge(s) {
+        const cls = filingColors[s] || 'bg-neutral-200 text-secondary-light';
+        return `<span class="badge ${cls} text-xs fw-semibold px-10 py-4 radius-8">${esc(s) || '—'}</span>`;
+    }
+
+    const payColors = { 'Paid': 'bg-success-focus text-success-600', 'Partial': 'bg-warning-focus text-warning-600', 'Unpaid': 'bg-danger-focus text-danger-600' };
+    function payBadge(s) {
+        if (!s || s === '—') return '<span class="text-secondary-light text-xs">No Fee</span>';
+        const cls = payColors[s] || 'bg-neutral-200 text-secondary-light';
+        return `<span class="badge ${cls} text-xs fw-semibold px-10 py-4 radius-8">${esc(s)}</span>`;
+    }
+
+    // ── Load data ────────────────────────────────────────────────────
+    async function loadData() {
+        try {
+            const res = await fetch('/api/payments/itr-summary');
+            const data = await res.json();
+            allRows = data.rows;
+            renderStats(data.stats, data.rows);
+            populateFilters();
+            applyFilter();
+        } catch (e) {
+            document.getElementById('payTableBody').innerHTML =
+                '<tr><td colspan="12" class="text-center text-danger-600 py-32">Failed to load data.</td></tr>';
+        }
+    }
+
+    // ── Stats ────────────────────────────────────────────────────────
+    function renderStats(stats, rows) {
+        const paidCnt    = rows.filter(r => r.paymentStatus === 'Paid').length;
+        const partialCnt = rows.filter(r => r.paymentStatus === 'Partial').length;
+        const unpaidCnt  = rows.filter(r => r.paymentStatus === 'Unpaid').length;
+
+        document.getElementById('statTotalFilings').textContent  = stats.totalFilings;
+        document.getElementById('statPaidCount').textContent     = paidCnt;
+        document.getElementById('statPartialCount').textContent  = partialCnt;
+        document.getElementById('statUnpaidCount').textContent   = unpaidCnt;
+        document.getElementById('statTotalFee').textContent      = fmt(stats.totalFee);
+        document.getElementById('statTotalDiscount').textContent = fmt(stats.totalDiscount);
+        document.getElementById('statNetFee').textContent        = fmt(stats.totalFee - stats.totalDiscount);
+        document.getElementById('statTotalPaid').textContent     = fmt(stats.totalPaid);
+        document.getElementById('statTotalBalance').textContent  = fmt(stats.totalBalance);
+
+        const net = stats.totalFee - stats.totalDiscount;
+        const collectPct = net > 0 ? Math.round((stats.totalPaid / net) * 100) : 0;
+        const balancePct = net > 0 ? Math.round((stats.totalBalance / net) * 100) : 0;
+        document.getElementById('collectProgress').style.width = collectPct + '%';
+        document.getElementById('balanceProgress').style.width = balancePct + '%';
+        document.getElementById('collectPct').textContent  = collectPct + '%';
+        document.getElementById('balancePct').textContent  = balancePct + '%';
+    }
+
+    // ── Filters ──────────────────────────────────────────────────────
+    function populateFilters() {
+        const fys     = [...new Set(allRows.map(r => r.financialYear).filter(Boolean))].sort().reverse();
+        const callers = [...new Set(allRows.map(r => r.client?.caller).filter(Boolean))].sort();
+        const paidTos = [...new Set(allRows.flatMap(r => (r.entries || []).map(e => e.paidTo)).filter(Boolean))].sort();
+        const modes   = [...new Set(allRows.flatMap(r => (r.entries || []).map(e => e.modeOfPayment)).filter(Boolean))].sort();
+
+        function fill(id, vals, label) {
+            const sel = document.getElementById(id);
+            const cur = sel.value;
+            sel.innerHTML = `<option value="">${label}</option>` +
+                vals.map(v => `<option value="${esc(v)}">${esc(v)}</option>`).join('');
+            if (cur) sel.value = cur;
+        }
+        fill('filterFY',     fys,     'All FY');
+        fill('filterCaller', callers, 'All Callers');
+        fill('filterPaidTo', paidTos, 'All Paid To');
+        fill('filterMode',   modes,   'All Modes');
+        syncFace('filterFY',     'filterFYLabel');
+        syncFace('filterCaller', 'filterCallerLabel');
+        syncFace('filterPaidTo', 'filterPaidToLabel');
+        syncFace('filterMode',   'filterModeLabel');
+    }
+
+    function applyFilter() {
+        const q         = document.getElementById('searchInput').value.trim().toLowerCase();
+        const fy        = document.getElementById('filterFY').value;
+        const caller    = document.getElementById('filterCaller').value;
+        const payStatus = document.getElementById('filterPayStatus').value;
+        const paidTo    = document.getElementById('filterPaidTo').value;
+        const mode      = document.getElementById('filterMode').value;
+        const dateFrom  = document.getElementById('filterDateFrom').value;
+        const dateTo    = document.getElementById('filterDateTo').value;
+        const hasFilter = q || fy || caller || payStatus || paidTo || mode || dateFrom || dateTo;
+        document.getElementById('clearFiltersBtn').classList.toggle('d-none', !hasFilter);
+
+        filtered = allRows.filter(r => {
+            const c = r.client || {};
+            const entries = r.entries || [];
+            if (q && !( (c.name||'').toLowerCase().includes(q) || (c.pan||'').toLowerCase().includes(q) )) return false;
+            if (fy        && r.financialYear !== fy)           return false;
+            if (caller    && (c.caller||'') !== caller)        return false;
+            if (payStatus && r.paymentStatus !== payStatus)    return false;
+            if (paidTo    && !entries.some(e => e.paidTo === paidTo))             return false;
+            if (mode      && !entries.some(e => e.modeOfPayment === mode))        return false;
+            if (dateFrom  && (r.assignedDate || '').slice(0,10) < dateFrom)       return false;
+            if (dateTo    && (r.assignedDate || '').slice(0,10) > dateTo)         return false;
+            return true;
+        });
+
+        // Update stat cards for filtered subset
+        const net   = filtered.reduce((s, r) => s + r.finalFee, 0);
+        const paid  = filtered.reduce((s, r) => s + r.paid, 0);
+        const bal   = filtered.reduce((s, r) => s + r.balance, 0);
+        const fee   = filtered.reduce((s, r) => s + r.fee, 0);
+        const disc  = filtered.reduce((s, r) => s + r.discount, 0);
+        const paidCnt    = filtered.filter(r => r.paymentStatus === 'Paid').length;
+        const partialCnt = filtered.filter(r => r.paymentStatus === 'Partial').length;
+        const unpaidCnt  = filtered.filter(r => r.paymentStatus === 'Unpaid').length;
+
+        document.getElementById('statTotalFilings').textContent  = filtered.length;
+        document.getElementById('statPaidCount').textContent     = paidCnt;
+        document.getElementById('statPartialCount').textContent  = partialCnt;
+        document.getElementById('statUnpaidCount').textContent   = unpaidCnt;
+        document.getElementById('statTotalFee').textContent      = fmt(fee);
+        document.getElementById('statTotalDiscount').textContent = fmt(disc);
+        document.getElementById('statNetFee').textContent        = fmt(net);
+        document.getElementById('statTotalPaid').textContent     = fmt(paid);
+        document.getElementById('statTotalBalance').textContent  = fmt(bal);
+
+        const collectPct = net > 0 ? Math.round((paid / net) * 100) : 0;
+        const balancePct = net > 0 ? Math.round((bal  / net) * 100) : 0;
+        document.getElementById('collectProgress').style.width = collectPct + '%';
+        document.getElementById('balanceProgress').style.width = balancePct + '%';
+        document.getElementById('collectPct').textContent  = collectPct + '%';
+        document.getElementById('balancePct').textContent  = balancePct + '%';
+
+        currentPage = 1;
+        renderTable();
+    }
+
+    // ── Table ────────────────────────────────────────────────────────
+    function renderTable() {
+        const tbody = document.getElementById('payTableBody');
+        const start = (currentPage - 1) * pageSize;
+        const slice = filtered.slice(start, start + pageSize);
+        if (!slice.length) {
+            tbody.innerHTML = '<tr><td colspan="12" class="text-center text-secondary-light py-32">No records found.</td></tr>';
+        } else {
+            tbody.innerHTML = slice.map((r, i) => {
+                const c = r.client || {};
+                const balCls = r.balance > 0 ? 'text-danger-600 fw-semibold' : r.balance === 0 && r.finalFee > 0 ? 'text-success-600 fw-semibold' : '';
+                return `<tr class="hover-row" style="cursor:pointer;" onclick="window.location='/services/itr-individual/${esc(r.id)}'">
+                    <td class="ps-20">${start + i + 1}</td>
+                    <td>
+                        <div class="fw-medium text-sm">${esc(c.name) || '—'}</div>
+                        <div class="text-secondary-light" style="font-size:.7rem;">${fmtDate(r.assignedDate)}</div>
+                    </td>
+                    <td class="text-xs">${esc(c.pan) || '—'}</td>
+                    <td><span class="badge bg-primary-light text-primary-600 text-xs fw-semibold px-10 py-4 radius-8">${esc(r.financialYear) || '—'}</span></td>
+                    <td class="text-xs">${esc(c.caller) || '—'}</td>
+                    <td>${filingBadge(r.filingStatus)}</td>
+                    <td class="text-end text-sm">${r.fee > 0 ? fmt(r.fee) : '<span class="text-secondary-light">—</span>'}</td>
+                    <td class="text-end text-sm">${r.discount > 0 ? fmt(r.discount) : '<span class="text-secondary-light">—</span>'}</td>
+                    <td class="text-end text-sm">${r.finalFee > 0 ? fmt(r.finalFee) : '<span class="text-secondary-light">—</span>'}</td>
+                    <td class="text-end text-sm">${r.paid > 0 ? '<span class="text-success-600 fw-semibold">' + fmt(r.paid) + '</span>' : '<span class="text-secondary-light">—</span>'}</td>
+                    <td class="text-end text-sm"><span class="${balCls}">${r.finalFee > 0 ? fmt(r.balance) : '<span class="text-secondary-light">—</span>'}</span></td>
+                    <td>${payBadge(r.paymentStatus)}</td>
+                </tr>`;
+            }).join('');
+        }
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const total = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        const start = Math.min((currentPage - 1) * pageSize + 1, total);
+        const end   = Math.min(currentPage * pageSize, total);
+        document.getElementById('paginationInfo').textContent = total
+            ? `Showing ${start}–${end} of ${total}` : 'No records';
+        let html = '';
+        for (let p = 1; p <= totalPages; p++) {
+            html += `<li class="page-item ${p === currentPage ? 'active' : ''}">
+                <button class="page-link radius-8 px-16 py-8 text-sm fw-medium" data-page="${p}">${p}</button></li>`;
+        }
+        document.getElementById('paginationList').innerHTML = html;
+    }
+
+    document.addEventListener('click', function (e) {
+        const pg = e.target.closest('[data-page]');
+        if (pg) { currentPage = parseInt(pg.dataset.page); renderTable(); }
+    });
+
+    // ── CSV export ───────────────────────────────────────────────────
+    function exportCsv() {
+        const cols = ['S.L','Client','PAN','FY','Caller','Filing Status','Fee','Discount','Net Fee','Collected','Balance','Payment Status'];
+        const rows = filtered.map((r, i) => {
+            const c = r.client || {};
+            return [i+1, c.name||'', c.pan||'', r.financialYear||'', c.caller||'', r.filingStatus||'',
+                    r.fee, r.discount, r.finalFee, r.paid, r.balance, r.paymentStatus||''];
+        });
+        const csv = [cols, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = 'itr_payments.csv';
+        a.click();
+    }
+
+    // ── PDF export ───────────────────────────────────────────────────
+    function exportPdf() {
+        document.getElementById('payPrintHead').innerHTML =
+            '<tr><th>S.L</th><th>Client</th><th>PAN</th><th>FY</th><th>Caller</th><th>Filing Status</th><th>Fee</th><th>Discount</th><th>Net Fee</th><th>Collected</th><th>Balance</th><th>Payment Status</th></tr>';
+        document.getElementById('payPrintBody').innerHTML = filtered.map((r, i) => {
+            const c = r.client || {};
+            return `<tr><td>${i+1}</td><td>${esc(c.name||'')}</td><td>${esc(c.pan||'')}</td><td>${esc(r.financialYear||'')}</td><td>${esc(c.caller||'')}</td><td>${esc(r.filingStatus||'')}</td><td>${r.fee}</td><td>${r.discount}</td><td>${r.finalFee}</td><td>${r.paid}</td><td>${r.balance}</td><td>${esc(r.paymentStatus||'')}</td></tr>`;
+        }).join('');
+        document.getElementById('payPrintArea').style.display = 'block';
+        window.print();
+        document.getElementById('payPrintArea').style.display = 'none';
+    }
+
+    // ── Event listeners ──────────────────────────────────────────────
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+    document.getElementById('filterDateFrom').addEventListener('change', applyFilter);
+    document.getElementById('filterDateTo').addEventListener('change', applyFilter);
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+    document.getElementById('pageSizeSelect').addEventListener('change', function() {
+        pageSize = parseInt(this.value); syncFace('pageSizeSelect','pageSizeFaceLabel'); applyFilter();
+    });
+
+    const selFaceMap = {
+        filterFY:        'filterFYLabel',
+        filterCaller:    'filterCallerLabel',
+        filterPayStatus: 'filterPayStatusLabel',
+        filterPaidTo:    'filterPaidToLabel',
+        filterMode:      'filterModeLabel',
+    };
+    Object.keys(selFaceMap).forEach(id => {
+        document.getElementById(id).addEventListener('change', function() {
+            syncFace(id, selFaceMap[id]); applyFilter();
+        });
+    });
+
+    document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        document.getElementById('filterDateFrom').value = '';
+        document.getElementById('filterDateTo').value = '';
+        Object.keys(selFaceMap).forEach(id => { document.getElementById(id).value = ''; });
+        Object.entries(selFaceMap).forEach(([selId, lblId]) => syncFace(selId, lblId));
+        applyFilter();
+    });
+
+    loadData();
+})();
+</script>

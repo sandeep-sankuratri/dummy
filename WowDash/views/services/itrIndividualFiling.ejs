@@ -1,0 +1,1282 @@
+<style>
+@media print {
+    body * { visibility: hidden; }
+    #itrPrintArea, #itrPrintArea * { visibility: visible; }
+    #itrPrintArea { position: absolute; top: 0; left: 0; width: 100%; }
+    #itrPrintArea table { width: 100%; border-collapse: collapse; font-size: 11px; }
+    #itrPrintArea th, #itrPrintArea td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; }
+    #itrPrintArea th { background: #f1f5f9; }
+}
+/* Page size custom select */
+.csel-wrap {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    height: 34px;
+}
+.csel-wrap select {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+    font-size: .75rem;
+}
+.csel-face {
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 6px;
+    height: 34px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: .75rem;
+    background: var(--bg-base, #fff);
+    color: inherit;
+    white-space: nowrap;
+    pointer-events: none;
+    width: 100%;
+}
+.csel-face .csel-arrow { font-size: .65rem; flex-shrink: 0; opacity: .55; }
+.csel-wrap select:focus + .csel-face { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.15); }
+/* Filter panel inputs */
+.fp-input {
+    height: 32px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: .75rem;
+    background: var(--bg-base, #fff);
+    color: inherit;
+    outline: none;
+    width: 100%;
+}
+.fp-input:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.15); }
+.fp-select {
+    height: 32px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 8px;
+    font-size: .75rem;
+    background: var(--bg-base, #fff);
+    color: inherit;
+    outline: none;
+    width: 100%;
+    cursor: pointer;
+    appearance: auto;
+}
+.fp-select:focus { border-color: #6366f1; box-shadow: 0 0 0 2px rgba(99,102,241,.15); }
+.fp-label { font-size: .7rem; font-weight: 600; color: #64748b; margin-bottom: 4px; letter-spacing: .02em; }
+.fp-section-title {
+    font-size: .65rem;
+    font-weight: 700;
+    color: #94a3b8;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #f1f5f9;
+}
+/* Filter badge */
+#filterBadge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 20px;
+    background: #6366f1;
+    color: #fff;
+    font-size: .6rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-left: 2px;
+    padding: 0 4px;
+}
+/* Filter panel – floating popup */
+#filterPanelAnchor { position: relative; }
+#filterPanel {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    width: min(960px, calc(100vw - 260px));
+    z-index: 300;
+    border: 1px solid #e2e8f0;
+    border-radius: 14px;
+    background: var(--bg-base, #fff);
+    box-shadow: 0 12px 40px rgba(0,0,0,.14);
+    overflow: hidden;
+}
+.fp-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 18px 10px;
+    border-bottom: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+.fp-header-title {
+    font-size: .78rem;
+    font-weight: 700;
+    color: #334155;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+.fp-body { padding: 12px 18px 10px; }
+.fp-footer {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 10px 18px;
+    border-top: 1px solid #f1f5f9;
+    background: #f8fafc;
+}
+.fp-apply-btn {
+    height: 32px;
+    padding: 0 18px;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 600;
+    background: #6366f1;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    transition: background .15s;
+}
+.fp-apply-btn:hover { background: #4f46e5; }
+.fp-clear-btn {
+    height: 32px;
+    padding: 0 14px;
+    border-radius: 8px;
+    font-size: .75rem;
+    font-weight: 500;
+    background: transparent;
+    color: #64748b;
+    border: 1px solid #e2e8f0;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    transition: all .15s;
+}
+.fp-clear-btn:hover { background: #f1f5f9; }
+/* ensure all panel inputs/selects are vertically centered */
+.fp-input, .fp-select { display: flex; align-items: center; }
+/* Table improvements */
+.itr-table th {
+    font-size: .7rem;
+    font-weight: 700;
+    letter-spacing: .03em;
+    text-transform: uppercase;
+    color: #64748b;
+    white-space: nowrap;
+    padding: 10px 12px;
+    border-bottom: 2px solid #e2e8f0;
+    background: #f8fafc;
+}
+.itr-table td {
+    font-size: .78rem;
+    padding: 10px 12px;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+}
+.itr-table tbody tr:hover td { background: #f8faff; }
+.itr-table tbody tr:last-child td { border-bottom: none; }
+.col-divider { border-left: 2px solid #e2e8f0 !important; }
+.col-client  { min-width: 150px; }
+.col-caller  { min-width: 120px; }
+.col-mgr     { min-width: 120px; }
+.col-prep    { min-width: 120px; }
+/* Pill badges */
+.pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    border-radius: 20px;
+    font-size: .7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    white-space: nowrap;
+}
+.itr-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 12px;
+    border: 1.5px solid #e2e8f0;
+    border-radius: 20px;
+    background: #fff;
+    cursor: pointer;
+    transition: all .15s ease;
+    white-space: nowrap;
+    font-size: 0;
+}
+.itr-chip:hover {
+    border-color: #6366f1;
+    background: #f5f3ff;
+}
+.itr-chip.chip-active {
+    border-color: #6366f1;
+    background: #ede9fe;
+}
+.itr-chip .chip-label {
+    font-size: .72rem;
+    font-weight: 600;
+    color: #475569;
+    letter-spacing: .01em;
+}
+.itr-chip.chip-active .chip-label { color: #4338ca; }
+.chip-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 5px;
+    border-radius: 20px;
+    background: #e2e8f0;
+    color: #334155;
+    font-size: .68rem;
+    font-weight: 700;
+}
+.itr-chip.chip-active .chip-badge { background: #6366f1; color: #fff; }
+.chip-badge-warn { background: #fef3c7; color: #92400e; }
+.itr-chip.chip-active .chip-badge-warn { background: #f59e0b; color: #fff; }
+.chip-badge-success { background: #dcfce7; color: #166534; }
+.itr-chip.chip-active .chip-badge-success { background: #22c55e; color: #fff; }
+.chip-divider {
+    width: 1px;
+    height: 24px;
+    background: #e2e8f0;
+    margin: 0 2px;
+    flex-shrink: 0;
+}
+#itrNavChips::-webkit-scrollbar { display: none; }
+/* Balance fill highlight */
+.bal-cell {
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 3px 8px;
+    display: inline-block;
+    white-space: nowrap;
+}
+</style>
+
+
+<!-- ══════════════════ UPDATE STATUS MODAL ══════════════════ -->
+<div class="modal fade" id="updateStatusModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-sm">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header px-24 py-16 border-bottom">
+                <h5 class="modal-title fw-semibold">Update Filing Status</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <label class="form-label fw-semibold text-primary-light text-sm mb-8">Filing Status <span class="text-danger-600">*</span></label>
+                <select id="statusSelect" class="form-control radius-8 form-select">
+                    <option value="">Select status...</option>
+                </select>
+                <div id="statusError" class="text-danger-600 text-sm mt-8 d-none">Please select a status.</div>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 gap-12">
+                <button type="button" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-24 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="confirmStatusBtn" class="btn btn-primary text-md px-24 py-12 radius-8">Update</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ══════════════════ ASSIGN CLIENT MODAL ══════════════════ -->
+<div class="modal fade" id="assignClientModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content radius-16 bg-base">
+            <div class="modal-header px-24 py-16 border-bottom">
+                <div>
+                    <h5 class="modal-title fw-semibold mb-2">Assign Client to ITR Individual Filing</h5>
+                    <div class="d-flex align-items-center gap-8 mt-4">
+                        <span id="step1Crumb" class="badge bg-primary-600 text-white text-xs px-10 py-4 radius-8">Step 1: Select Client</span>
+                        <iconify-icon icon="ep:arrow-right" class="text-secondary-light text-xs"></iconify-icon>
+                        <span id="step2Crumb" class="badge bg-neutral-200 text-secondary-light text-xs px-10 py-4 radius-8">Step 2: Select FY</span>
+                    </div>
+                </div>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-24">
+                <div id="step1Panel">
+                    <div class="mb-16">
+                        <form class="navbar-search w-100 mb-0" onsubmit="return false;" style="display:block!important">
+                            <input type="text" id="clientSearch" class="bg-base h-40-px w-100" placeholder="Search by name, PAN or mobile...">
+                            <iconify-icon icon="ion:search-outline" class="icon"></iconify-icon>
+                        </form>
+                    </div>
+                    <div class="table-responsive scroll-sm" style="max-height:320px;overflow-y:auto;">
+                        <table class="table bordered-table sm-table mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Client Name</th><th>PAN</th><th>Mobile</th><th class="text-center">Select</th>
+                                </tr>
+                            </thead>
+                            <tbody id="clientListBody">
+                                <tr><td colspan="4" class="text-center text-secondary-light py-20">Loading...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="step1Error" class="text-danger-600 text-sm mt-8 d-none">Please select a client.</div>
+                </div>
+                <div id="step2Panel" class="d-none">
+                    <div class="d-flex align-items-center gap-16 p-16 bg-primary-light radius-12 mb-20 border">
+                        <div class="w-44-px h-44-px bg-primary-600 text-white d-flex align-items-center justify-content-center rounded-circle flex-shrink-0 fw-bold" id="s2_avatar">?</div>
+                        <div>
+                            <div class="fw-semibold text-primary-light text-sm" id="s2_name">—</div>
+                            <div class="text-secondary-light text-xs">PAN: <span id="s2_pan">—</span> &nbsp;|&nbsp; Mobile: <span id="s2_mobile">—</span></div>
+                        </div>
+                    </div>
+                    <div class="row gy-16">
+                        <div class="col-12">
+                            <label class="form-label fw-semibold text-primary-light text-sm mb-8">Financial Year <span class="text-danger-600">*</span></label>
+                            <select id="fySelect" class="form-control radius-8 form-select">
+                                <option value="">Select financial year...</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div id="step2Error" class="text-danger-600 text-sm mt-12 d-none"></div>
+                </div>
+            </div>
+            <div class="modal-footer px-24 pb-24 border-0 d-flex align-items-center gap-12 flex-nowrap">
+                <button type="button" id="backToStep1Btn" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-24 py-11 radius-8 me-auto d-none d-inline-flex align-items-center gap-6">
+                    <iconify-icon icon="ep:d-arrow-left" class="text-md"></iconify-icon>Back
+                </button>
+                <button type="button" class="border border-neutral-400 bg-hover-neutral-200 text-secondary-light text-md px-24 py-11 radius-8" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" id="nextStepBtn" class="btn btn-primary text-md px-24 py-12 radius-8 d-inline-flex align-items-center gap-6">
+                    Next <iconify-icon icon="ep:arrow-right" class="text-md"></iconify-icon>
+                </button>
+                <button type="button" id="assignServiceBtn" class="btn btn-success text-md px-24 py-12 radius-8 d-none d-inline-flex align-items-center gap-6">
+                    <iconify-icon icon="lucide:check-circle" class="text-md"></iconify-icon>Assign Service
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- ══════════════════ PRINT AREA ══════════════════ -->
+<div id="itrPrintArea" style="display:none;">
+    <h3 style="margin-bottom:12px;">ITR Individual Filing List</h3>
+    <table>
+        <thead id="itrPrintHead"></thead>
+        <tbody id="itrPrintBody"></tbody>
+    </table>
+</div>
+
+
+<!-- ══════════════════ MAIN CARD ══════════════════ -->
+<div class="card h-100 p-0 radius-12">
+
+    <!-- Card Header -->
+    <div id="filterPanelAnchor" class="card-header border-bottom bg-base py-12 px-20">
+
+        <!-- Toolbar -->
+        <div class="d-flex align-items-center gap-8 flex-wrap">
+
+            <!-- Page size -->
+            <div class="csel-wrap" style="width:66px;">
+                <select id="pageSizeSelect">
+                    <option value="10">10</option>
+                    <option value="25">25</option>
+                    <option value="50">50</option>
+                </select>
+                <div class="csel-face">
+                    <span id="pageSizeFaceLabel">10</span>
+                    <iconify-icon icon="lucide:chevron-down" class="csel-arrow"></iconify-icon>
+                </div>
+            </div>
+
+            <!-- Search -->
+            <form class="navbar-search mb-0" onsubmit="return false;">
+                <input type="text" id="searchInput" class="bg-base" placeholder="Search name, PAN, mobile…"
+                    style="height:34px;padding-left:32px;font-size:.75rem;min-width:200px;">
+                <iconify-icon icon="ion:search-outline" class="icon" style="font-size:.85rem;top:50%;transform:translateY(-50%);"></iconify-icon>
+            </form>
+
+            <!-- Filter toggle -->
+            <button type="button" id="filterToggleBtn"
+                class="btn border text-xs radius-8 d-inline-flex align-items-center"
+                style="height:34px;padding:0 12px;white-space:nowrap;gap:5px;border-color:#6366f1!important;color:#6366f1;">
+                <iconify-icon icon="lucide:sliders-horizontal" style="font-size:.85rem;line-height:1;display:flex;"></iconify-icon>Filters
+                <span id="filterBadge" class="d-none">0</span>
+            </button>
+
+            <!-- Clear all -->
+            <button type="button" id="clearFiltersBtn"
+                class="btn border border-secondary-light text-secondary-light text-xs radius-8 d-none d-inline-flex align-items-center gap-4"
+                style="height:34px;padding:0 10px;white-space:nowrap;">
+                <iconify-icon icon="lucide:x" style="font-size:.7rem;"></iconify-icon>Clear Filters
+                <span id="clearFiltersCount"
+                    style="display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;border-radius:20px;background:#94a3b8;color:#fff;font-size:.6rem;font-weight:700;padding:0 4px;"></span>
+            </button>
+
+            <!-- Right: export + assign -->
+            <div class="ms-auto d-flex align-items-center gap-6 flex-shrink-0">
+                <button type="button" id="exportCsvBtn" title="Export CSV"
+                    class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-4"
+                    style="height:34px;padding:0 12px;white-space:nowrap;">
+                    <iconify-icon icon="lucide:file-spreadsheet" style="font-size:.85rem;"></iconify-icon>CSV
+                </button>
+                <button type="button" id="exportPdfBtn" title="Export PDF"
+                    class="btn btn-outline-secondary-600 text-xs radius-8 d-inline-flex align-items-center gap-4"
+                    style="height:34px;padding:0 12px;white-space:nowrap;">
+                    <iconify-icon icon="lucide:file-text" style="font-size:.85rem;"></iconify-icon>PDF
+                </button>
+                <button type="button" id="openAssignBtn" class="d-none" aria-hidden="true"></button>
+            </div>
+        </div>
+
+        <!-- ── Filter Panel (floating popup) ── -->
+        <div id="filterPanel" class="d-none">
+            <div class="fp-header">
+                <div class="fp-header-title">
+                    <iconify-icon icon="lucide:sliders-horizontal" style="font-size:.85rem;color:#6366f1;"></iconify-icon>
+                    Filter Filings
+                </div>
+                <button type="button" id="fpCloseBtn" style="background:none;border:none;cursor:pointer;color:#94a3b8;font-size:1rem;line-height:1;padding:2px;">
+                    <iconify-icon icon="lucide:x"></iconify-icon>
+                </button>
+            </div>
+
+            <div class="fp-body">
+                <!-- Row 1: Date, FY, Filing Status, Filing Type -->
+                <div class="fp-section-title">Date &amp; Period &nbsp;·&nbsp; Return Details &nbsp;·&nbsp; Team &nbsp;·&nbsp; Financials</div>
+                <div class="row g-8 mb-8">
+                    <div class="col-3">
+                        <div class="fp-label">Date From</div>
+                        <input type="date" id="filterDateFrom" class="fp-input">
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Date To</div>
+                        <input type="date" id="filterDateTo" class="fp-input">
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Financial Year</div>
+                        <select id="filterFY" class="fp-select"><option value="">All FY</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Filing Status</div>
+                        <select id="filterStatus" class="fp-select"><option value="">All Statuses</option></select>
+                    </div>
+                </div>
+                <div class="row g-8 mb-8">
+                    <div class="col-3">
+                        <div class="fp-label">Filing Type</div>
+                        <select id="filterFilingType" class="fp-select"><option value="">All Types</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">ITR Type</div>
+                        <select id="filterItrType" class="fp-select"><option value="">All ITR Types</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Return Outcome</div>
+                        <select id="filterReturnOutcome" class="fp-select"><option value="">All Outcomes</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Payment Status</div>
+                        <select id="filterPayStatus" class="fp-select">
+                            <option value="">All</option>
+                            <option value="Paid">Paid</option>
+                            <option value="Partial">Partial</option>
+                            <option value="Unpaid">Unpaid</option>
+                            <option value="—">Not Set</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row g-8">
+                    <div class="col-3">
+                        <div class="fp-label">Caller</div>
+                        <select id="filterCaller" class="fp-select"><option value="">All Callers</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Tax Preparer</div>
+                        <select id="filterPreparer" class="fp-select"><option value="">All Preparers</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Manager</div>
+                        <select id="filterManager" class="fp-select"><option value="">All Managers</option></select>
+                    </div>
+                    <div class="col-3">
+                        <div class="fp-label">Pay. Handled By</div>
+                        <select id="filterPayHandler" class="fp-select"><option value="">All</option></select>
+                    </div>
+                </div>
+                <div class="row g-8 mt-8">
+                    <div class="col-4">
+                        <div class="fp-label">Final Fee (₹)</div>
+                        <div class="d-flex align-items-center gap-6">
+                            <input type="number" id="filterFeeMin" class="fp-input" placeholder="Min" min="0" style="width:50%;">
+                            <span class="text-secondary-light text-xs flex-shrink-0">–</span>
+                            <input type="number" id="filterFeeMax" class="fp-input" placeholder="Max" min="0" style="width:50%;">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fp-label">Paid (₹)</div>
+                        <div class="d-flex align-items-center gap-6">
+                            <input type="number" id="filterPaidMin" class="fp-input" placeholder="Min" min="0" style="width:50%;">
+                            <span class="text-secondary-light text-xs flex-shrink-0">–</span>
+                            <input type="number" id="filterPaidMax" class="fp-input" placeholder="Max" min="0" style="width:50%;">
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="fp-label">Balance (₹)</div>
+                        <div class="d-flex align-items-center gap-6">
+                            <input type="number" id="filterBalMin" class="fp-input" placeholder="Min" min="0" style="width:50%;">
+                            <span class="text-secondary-light text-xs flex-shrink-0">–</span>
+                            <input type="number" id="filterBalMax" class="fp-input" placeholder="Max" min="0" style="width:50%;">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="fp-footer">
+                <button type="button" class="fp-clear-btn" id="fpClearBtn">
+                    <iconify-icon icon="lucide:rotate-ccw" style="font-size:.75rem;"></iconify-icon>Reset
+                </button>
+                <button type="button" class="fp-apply-btn" id="fpApplyBtn">
+                    <iconify-icon icon="lucide:check" style="font-size:.8rem;"></iconify-icon>Apply Filters
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table -->
+    <div class="card-body p-0">
+        <div class="table-responsive scroll-sm">
+            <table class="table mb-0 itr-table" id="filingsTable">
+                <thead>
+                    <tr>
+                        <th style="width:42px;">#</th>
+                        <th>Date</th>
+                        <th class="col-client">Client</th>
+                        <th>PAN</th>
+                        <th>Mobile</th>
+                        <th>FY</th>
+                        <th class="col-caller">Caller</th>
+                        <th class="col-mgr">Manager</th>
+                        <th class="col-prep">Preparer</th>
+                        <th class="col-divider">Filing Status</th>
+                        <th>Filing Type</th>
+                        <th>ITR Type</th>
+                        <th>Return Outcome</th>
+                        <th class="col-divider">Final Fee</th>
+                        <th>Paid</th>
+                        <th>Balance</th>
+                        <th>Pay. Status</th>
+                        <th>Pay. Handled By</th>
+                    </tr>
+                </thead>
+                <tbody id="filingsTableBody">
+                    <tr id="loadingRow"><td colspan="18" class="text-center text-secondary-light py-32">
+                        <iconify-icon icon="svg-spinners:ring-resize" style="font-size:1.4rem;color:#6366f1;display:block;margin:0 auto 8px;"></iconify-icon>
+                        Loading filings…
+                    </td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 px-20 py-14 border-top">
+            <span id="paginationInfo" class="text-secondary-light text-sm"></span>
+            <ul class="pagination d-flex flex-wrap align-items-center gap-2 justify-content-center mb-0" id="paginationList"></ul>
+        </div>
+    </div>
+</div>
+
+
+<script>
+(function () {
+    let allFilings = [];
+    let filtered = [];
+    let currentPage = 1;
+    let pageSize = 10;
+    let pendingStatusId = null;
+    let itrStatuses = [];
+    let s2Options = [];       // filing status colours
+    let outcomeOptions = [];  // return outcome colours
+    let s2Options_fys = [];
+    let activeChipField = null;   // 'filingStatus' | 'filingType' | 'returnOutcome' | 'paymentHandledBy' | null
+    let activeChipValue = null;   // the specific value being filtered
+
+    // ── Helpers ─────────────────────────────────────────────────────
+    function escHtml(s) { return String(s ?? '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+    function fmtDate(iso) { if (!iso) return ''; return new Date(iso).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' }); }
+    function isoDate(iso) { if (!iso) return ''; return iso.slice(0, 10); }
+
+    function hexToRgb(hex) {
+        const h = hex.replace('#','');
+        const n = parseInt(h.length === 3 ? h.split('').map(c=>c+c).join('') : h, 16);
+        return [(n>>16)&255,(n>>8)&255,n&255];
+    }
+
+    // Returns true for statuses that should be shown in the Filing Status column.
+    function isDisplayableStatus(s) {
+        if (!s) return false;
+        if (s === 'Opened') return true;
+        return s2Options.some(o => o.name === s);
+    }
+
+    // Resolve which status to show: if the current status is an assignment/system status,
+    // walk the history backwards to find the last displayable status.
+    function resolveDisplayStatus(f) {
+        if (isDisplayableStatus(f.filingStatus)) return f.filingStatus;
+        const history = f.statusHistory || [];
+        for (let i = history.length - 1; i >= 0; i--) {
+            if (isDisplayableStatus(history[i].status)) return history[i].status;
+        }
+        return '';
+    }
+
+    // Filing status badge — shows dropdown-defined statuses plus "Opened".
+    function filingBadge(s) {
+        if (!s) return '';
+        const opt = s2Options.find(o => o.name === s);
+        if (!opt) {
+            if (s === 'Opened') return `<span class="pill" style="background:#f1f5f9;color:#475569;">${escHtml(s)}</span>`;
+            return '';
+        }
+        if (opt.color) {
+            const [r,g,b] = hexToRgb(opt.color);
+            return `<span class="pill" style="background:rgba(${r},${g},${b},0.12);color:${opt.color};">${escHtml(s)}</span>`;
+        }
+        return `<span class="pill" style="background:#f1f5f9;color:#475569;">${escHtml(s)}</span>`;
+    }
+
+    // Filing type — plain text
+    function filingTypeText(s) {
+        if (!s) return '';
+        return `<span class="text-sm">${escHtml(s)}</span>`;
+    }
+
+    // ITR type — plain text
+    function itrTypeText(s) {
+        if (!s) return '';
+        return `<span class="text-sm">${escHtml(s)}</span>`;
+    }
+
+    // Return outcome badge (uses outcomeOptions colors, no dot)
+    function outcomeBadge(s) {
+        if (!s) return '';
+        const opt = outcomeOptions.find(o => o.name === s);
+        if (opt && opt.color) {
+            const [r,g,b] = hexToRgb(opt.color);
+            return `<span class="pill" style="background:rgba(${r},${g},${b},0.12);color:${opt.color};">${escHtml(s)}</span>`;
+        }
+        return `<span class="pill" style="background:#f1f5f9;color:#475569;">${escHtml(s)}</span>`;
+    }
+
+    const payColors = { 'Paid': '#22C55E', 'Partial': '#F59E0B', 'Unpaid': '#EF4444' };
+    function payBadge(s) {
+        if (!s || s === '—') return '';
+        const color = payColors[s];
+        if (color) {
+            const [r,g,b] = hexToRgb(color);
+            return `<span class="pill" style="background:rgba(${r},${g},${b},0.1);color:${color};">${escHtml(s)}</span>`;
+        }
+        return `<span class="pill" style="background:#f1f5f9;color:#475569;">${escHtml(s)}</span>`;
+    }
+
+    // Balance cell — highlighted fill if non-zero
+    function balanceCell(v, feeSet) {
+        if (v == null || !feeSet) return '';
+        const n = Number(v);
+        const fmt = '₹' + n.toLocaleString('en-IN');
+        if (n > 0) return `<span class="bal-cell" style="background:rgba(239,68,68,0.1);color:#DC2626;">${fmt}</span>`;
+        if (n < 0) return `<span class="bal-cell" style="background:rgba(34,197,94,0.1);color:#16A34A;">${fmt}</span>`;
+        return `<span class="bal-cell" style="background:rgba(100,116,139,0.08);color:#475569;">${fmt}</span>`;
+    }
+
+    // ── Populate filter dropdowns ────────────────────────────────────
+    function populateFilters() {
+        const fys         = [...new Set(allFilings.map(f => f.financialYear).filter(Boolean))].sort().reverse();
+        const callers     = [...new Set(allFilings.map(f => f.client?.caller).filter(Boolean))].sort();
+        const managers    = [...new Set(allFilings.map(f => f.manager).filter(Boolean))].sort();
+        const preparers   = [...new Set(allFilings.map(f => f.preparer).filter(Boolean))].sort();
+        const statuses    = [...new Set(allFilings.map(f => f.filingStatus).filter(Boolean))].sort();
+        const handlers    = [...new Set(allFilings.map(f => f.paymentHandledBy).filter(Boolean))].sort();
+        const itrTypes    = [...new Set(allFilings.map(f => f.itrType).filter(Boolean))].sort();
+        const filingTypes = [...new Set(allFilings.map(f => f.filingType).filter(Boolean))].sort();
+        const outcomes    = outcomeOptions.map(o => o.name);
+
+        // Returns true if at least one filing has a blank value for this field
+        const anyEmpty = fn => allFilings.some(f => !fn(f));
+
+        function fill(id, vals, defaultLabel, showEmpty) {
+            const sel = document.getElementById(id);
+            if (!sel) return;
+            const cur = sel.value;
+            sel.innerHTML = `<option value="">${defaultLabel}</option>` +
+                vals.map(v => `<option value="${escHtml(v)}">${escHtml(v)}</option>`).join('') +
+                (showEmpty ? `<option value="__empty__">(Empty)</option>` : '');
+            if (cur) sel.value = cur;
+        }
+        fill('filterFY',            fys,         'All FY');
+        fill('filterCaller',        callers,     'All Callers',   anyEmpty(f => f.client?.caller));
+        fill('filterManager',       managers,    'All Managers',  anyEmpty(f => f.manager));
+        fill('filterPreparer',      preparers,   'All Preparers', anyEmpty(f => f.preparer));
+        fill('filterStatus',        statuses,    'All Statuses',  anyEmpty(f => f.filingStatus));
+        fill('filterPayHandler',    handlers,    'All',           anyEmpty(f => f.paymentHandledBy));
+        fill('filterItrType',       itrTypes,    'All ITR Types', anyEmpty(f => f.itrType));
+        fill('filterFilingType',    filingTypes, 'All Types',     anyEmpty(f => f.filingType));
+        fill('filterReturnOutcome', outcomes,    'All Outcomes',  anyEmpty(f => f.returnOutcome));
+    }
+
+    // ── Fetch filings + colours ──────────────────────────────────────
+    async function loadFilings() {
+        try {
+            const [filingsRes, s2Res, outcomeRes] = await Promise.all([
+                fetch('/api/itr-filings'),
+                fetch('/api/itr-status2'),
+                fetch('/api/return-outcomes'),
+            ]);
+            allFilings     = await filingsRes.json();
+            s2Options      = await s2Res.json();
+            outcomeOptions = await outcomeRes.json();
+            populateFilters();
+            buildNavChips();
+            applyFilter();
+        } catch (e) {
+            document.getElementById('loadingRow').innerHTML =
+                '<td colspan="18" class="text-center text-danger-600 py-20">Failed to load data.</td>';
+        }
+    }
+
+    // ── Dynamic navbar chips ─────────────────────────────────────────
+    function buildNavChips() {
+        const container = document.getElementById('itrNavChips');
+        if (!container) return;
+
+        // Count distinct non-empty values per field across all filings
+        function countBy(fn) {
+            const map = new Map();
+            allFilings.forEach(f => {
+                const v = fn(f);
+                if (v) map.set(v, (map.get(v) || 0) + 1);
+            });
+            return [...map.entries()].sort((a, b) => b[1] - a[1]);
+        }
+
+        const statusEntries  = countBy(f => resolveDisplayStatus(f));
+        const typeEntries    = countBy(f => f.filingType   || '');
+        const outcomeEntries = countBy(f => f.returnOutcome || '');
+        const handlerEntries = countBy(f => f.paymentHandledBy || '');
+
+        // Badge colour per field/value
+        function badgeStyle(field, value) {
+            if (field === 'filingStatus') {
+                if (value === 'Opened') return 'background:#f1f5f9;color:#475569;';
+                const opt = s2Options.find(o => o.name === value);
+                if (opt && opt.color) {
+                    const [r,g,b] = hexToRgb(opt.color);
+                    return `background:rgba(${r},${g},${b},0.18);color:${opt.color};`;
+                }
+                return 'background:#f1f5f9;color:#475569;';
+            }
+            if (field === 'returnOutcome') {
+                const opt = outcomeOptions.find(o => o.name === value);
+                if (opt && opt.color) {
+                    const [r,g,b] = hexToRgb(opt.color);
+                    return `background:rgba(${r},${g},${b},0.18);color:${opt.color};`;
+                }
+                return 'background:#fef3c7;color:#92400e;';
+            }
+            if (field === 'filingType')       return 'background:#eff6ff;color:#1d4ed8;';
+            if (field === 'paymentHandledBy') return 'background:#f5f3ff;color:#6d28d9;';
+            return 'background:#f1f5f9;color:#475569;';
+        }
+
+        function chipHtml(field, value, count) {
+            const active = (activeChipField === field && activeChipValue === value) ? ' chip-active' : '';
+            const style  = badgeStyle(field, value);
+            return `<button class="itr-chip${active}" data-field="${escHtml(field)}" data-value="${escHtml(value)}">
+                <span class="chip-label">${escHtml(value)}</span>
+                <span class="chip-badge" style="${style}">${count}</span>
+            </button>`;
+        }
+
+        function divider() { return '<div class="chip-divider"></div>'; }
+
+        let html = '';
+
+        // Total chip (clears chip filter)
+        const totalActive = !activeChipField ? ' chip-active' : '';
+        html += `<button class="itr-chip${totalActive}" data-field="total" data-value="">
+            <span class="chip-label">Total</span>
+            <span class="chip-badge">${allFilings.length}</span>
+        </button>`;
+
+        if (statusEntries.length)  { html += divider(); statusEntries.forEach(([v,c])  => { html += chipHtml('filingStatus',     v, c); }); }
+        if (typeEntries.length)    { html += divider(); typeEntries.forEach(([v,c])    => { html += chipHtml('filingType',       v, c); }); }
+        if (outcomeEntries.length) { html += divider(); outcomeEntries.forEach(([v,c]) => { html += chipHtml('returnOutcome',    v, c); }); }
+        if (handlerEntries.length) { html += divider(); handlerEntries.forEach(([v,c]) => { html += chipHtml('paymentHandledBy', v, c); }); }
+
+        container.innerHTML = html;
+    }
+
+    window.chipFilter = function(field, value) {
+        if (field === 'total' || (activeChipField === field && activeChipValue === value)) {
+            activeChipField = null;
+            activeChipValue = null;
+        } else {
+            activeChipField = field;
+            activeChipValue = value;
+        }
+        buildNavChips();
+        applyFilter();
+    };
+
+    // ── Filter + render ──────────────────────────────────────────────
+    function applyFilter() {
+        const q             = document.getElementById('searchInput').value.trim().toLowerCase();
+        const dateFrom      = document.getElementById('filterDateFrom').value;
+        const dateTo        = document.getElementById('filterDateTo').value;
+        const fy            = document.getElementById('filterFY').value;
+        const caller        = document.getElementById('filterCaller').value;
+        const manager       = document.getElementById('filterManager').value;
+        const preparer      = document.getElementById('filterPreparer').value;
+        const status        = document.getElementById('filterStatus').value;
+        const filingType    = document.getElementById('filterFilingType').value;
+        const itrType       = document.getElementById('filterItrType').value;
+        const returnOutcome = document.getElementById('filterReturnOutcome').value;
+        const payStatus     = document.getElementById('filterPayStatus').value;
+        const payHandler    = document.getElementById('filterPayHandler').value;
+        const feeMin        = document.getElementById('filterFeeMin').value;
+        const feeMax        = document.getElementById('filterFeeMax').value;
+        const paidMin       = document.getElementById('filterPaidMin').value;
+        const paidMax       = document.getElementById('filterPaidMax').value;
+        const balMin        = document.getElementById('filterBalMin').value;
+        const balMax        = document.getElementById('filterBalMax').value;
+
+        // Badge count (panel filters only, not search)
+        const panelFilters = [dateFrom, dateTo, fy, caller, manager, preparer, status,
+                              filingType, itrType, returnOutcome,
+                              payStatus, payHandler, feeMin, feeMax, paidMin, paidMax, balMin, balMax];
+        const activeCount = panelFilters.filter(Boolean).length;
+        const badge = document.getElementById('filterBadge');
+        if (activeCount > 0) { badge.textContent = activeCount; badge.classList.remove('d-none'); }
+        else { badge.classList.add('d-none'); }
+
+        const hasFilter = q || panelFilters.some(Boolean);
+
+        document.getElementById('clearFiltersBtn').classList.toggle('d-none', !hasFilter);
+
+        filtered = allFilings.filter(f => {
+            const c = f.client || {};
+            if (q && !(
+                (c.name  || '').toLowerCase().includes(q) ||
+                (c.pan   || '').toLowerCase().includes(q) ||
+                (c.mobile|| '').toLowerCase().includes(q) ||
+                (f.financialYear || '').toLowerCase().includes(q)
+            )) return false;
+            if (dateFrom && isoDate(f.assignedDate) < dateFrom) return false;
+            if (dateTo   && isoDate(f.assignedDate) > dateTo)   return false;
+            if (fy       && f.financialYear !== fy)              return false;
+            // Helper: '' = show all, '__empty__' = only blank rows, else exact match
+            const mf = (fv, rv) => !fv || (fv === '__empty__' ? !rv : rv === fv);
+            if (!mf(caller,        c.caller))             return false;
+            if (!mf(manager,       f.manager))            return false;
+            if (!mf(preparer,      f.preparer))           return false;
+            if (!mf(status,        f.filingStatus))       return false;
+            if (!mf(filingType,    f.filingType))         return false;
+            if (!mf(itrType,       f.itrType))            return false;
+            if (!mf(returnOutcome, f.returnOutcome))      return false;
+            if (!mf(payHandler,    f.paymentHandledBy))   return false;
+            if (payStatus && (f.paymentStatus || '—') !== payStatus) return false;
+            if (feeMin  !== '' && (f.finalFee  ?? -1) < parseFloat(feeMin))  return false;
+            if (feeMax  !== '' && (f.finalFee  ?? -1) > parseFloat(feeMax))  return false;
+            if (paidMin !== '' && (f.totalPaid ?? -1) < parseFloat(paidMin)) return false;
+            if (paidMax !== '' && (f.totalPaid ?? -1) > parseFloat(paidMax)) return false;
+            if (balMin  !== '' && (f.balance   ?? -1) < parseFloat(balMin))  return false;
+            if (balMax  !== '' && (f.balance   ?? -1) > parseFloat(balMax))  return false;
+            // Chip field+value filter
+            if (activeChipField && activeChipValue) {
+                if (activeChipField === 'filingStatus') {
+                    if (resolveDisplayStatus(f) !== activeChipValue) return false;
+                } else if (activeChipField === 'filingType') {
+                    if ((f.filingType || '') !== activeChipValue) return false;
+                } else if (activeChipField === 'returnOutcome') {
+                    if ((f.returnOutcome || '') !== activeChipValue) return false;
+                } else if (activeChipField === 'paymentHandledBy') {
+                    if ((f.paymentHandledBy || '') !== activeChipValue) return false;
+                }
+            }
+            return true;
+        });
+        const _clearEl = document.getElementById('clearFiltersCount');
+        if (_clearEl) { _clearEl.textContent = hasFilter ? filtered.length : ''; _clearEl.style.display = hasFilter ? 'inline-flex' : 'none'; }
+        currentPage = 1;
+        renderTable();
+    }
+
+    function renderTable() {
+        const tbody = document.getElementById('filingsTableBody');
+        const start = (currentPage - 1) * pageSize;
+        const slice = filtered.slice(start, start + pageSize);
+        if (!slice.length) {
+            tbody.innerHTML = '<tr><td colspan="18" class="text-center text-secondary-light py-32">No records found.</td></tr>';
+        } else {
+            tbody.innerHTML = slice.map((f, i) => {
+                const c = f.client || {};
+                const feeSet = f.finalFee != null && f.finalFee > 0;
+                const fmtINR = v => v != null && feeSet ? '₹' + Number(v).toLocaleString('en-IN') : '';
+                return `<tr>
+                    <td class="text-secondary-light">${start + i + 1}</td>
+                    <td style="white-space:nowrap;">${fmtDate(f.assignedDate)}</td>
+                    <td class="col-client"><a href="/services/itr-individual/${escHtml(f.id)}" class="text-primary-600 fw-semibold hover-underline" style="font-size:.8rem;">${escHtml(c.name) || ''}</a></td>
+                    <td><span style="font-family:monospace;font-size:.75rem;letter-spacing:.04em;">${escHtml(c.pan) || ''}</span></td>
+                    <td>${escHtml(c.mobile) || ''}</td>
+                    <td>${f.financialYear ? `<span class="pill" style="background:rgba(99,102,241,.08);color:#6366f1;">${escHtml(f.financialYear)}</span>` : ''}</td>
+                    <td class="col-caller">${escHtml(c.caller) || ''}</td>
+                    <td class="col-mgr">${escHtml(f.manager) || ''}</td>
+                    <td class="col-prep">${escHtml(f.preparer) || ''}</td>
+                    <td class="col-divider">${filingBadge(resolveDisplayStatus(f))}</td>
+                    <td>${filingTypeText(f.filingType)}</td>
+                    <td>${itrTypeText(f.itrType)}</td>
+                    <td>${outcomeBadge(f.returnOutcome)}</td>
+                    <td class="col-divider text-nowrap" style="font-variant-numeric:tabular-nums;">${fmtINR(f.finalFee)}</td>
+                    <td class="text-nowrap" style="font-variant-numeric:tabular-nums;">${fmtINR(f.totalPaid)}</td>
+                    <td class="text-nowrap">${balanceCell(f.balance, feeSet)}</td>
+                    <td>${payBadge(f.paymentStatus)}</td>
+                    <td>${escHtml(f.paymentHandledBy) || ''}</td>
+                </tr>`;
+            }).join('');
+        }
+        renderPagination();
+    }
+
+    function renderPagination() {
+        const total = filtered.length;
+        const totalPages = Math.max(1, Math.ceil(total / pageSize));
+        const start = Math.min((currentPage - 1) * pageSize + 1, total);
+        const end   = Math.min(currentPage * pageSize, total);
+        document.getElementById('paginationInfo').textContent = total
+            ? `Showing ${start}–${end} of ${total} records` : 'No records';
+        let html = '';
+        if (totalPages <= 7) {
+            for (let p = 1; p <= totalPages; p++) {
+                html += `<li class="page-item ${p === currentPage ? 'active' : ''}">
+                    <button class="page-link radius-8 px-14 py-7 text-sm fw-medium" data-page="${p}">${p}</button></li>`;
+            }
+        } else {
+            const pages = new Set([1, 2, currentPage - 1, currentPage, currentPage + 1, totalPages - 1, totalPages].filter(p => p >= 1 && p <= totalPages));
+            let last = 0;
+            [...pages].sort((a,b) => a-b).forEach(p => {
+                if (last && p - last > 1) html += `<li class="page-item disabled"><span class="page-link px-10 py-7 text-sm">…</span></li>`;
+                html += `<li class="page-item ${p === currentPage ? 'active' : ''}">
+                    <button class="page-link radius-8 px-14 py-7 text-sm fw-medium" data-page="${p}">${p}</button></li>`;
+                last = p;
+            });
+        }
+        document.getElementById('paginationList').innerHTML = html;
+    }
+
+    // ── CSV export ───────────────────────────────────────────────────
+    function exportCsv() {
+        const cols = ['#','Date','Client Name','PAN','Mobile','FY','Caller','Manager','Preparer',
+                      'Filing Status','Filing Type','ITR Type','Return Outcome',
+                      'Final Fee','Paid','Balance','Pay. Status','Pay. Handled By'];
+        const rows = filtered.map((f, i) => {
+            const c = f.client || {};
+            const feeSet = f.finalFee != null && f.finalFee > 0;
+            const fmtMoney = v => (v != null && feeSet) ? '₹' + Number(v).toLocaleString('en-IN') : '';
+            return [i+1, fmtDate(f.assignedDate), c.name||'', c.pan||'', c.mobile||'', f.financialYear||'',
+                    c.caller||'', f.manager||'', f.preparer||'',
+                    f.filingStatus||'', f.filingType||'', f.itrType||'', f.returnOutcome||'',
+                    fmtMoney(f.finalFee), fmtMoney(f.totalPaid), fmtMoney(f.balance),
+                    f.paymentStatus||'', f.paymentHandledBy||''];
+        });
+        const csv = [cols, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv' }));
+        a.download = 'itr_filings.csv';
+        a.click();
+    }
+
+    // ── PDF export ───────────────────────────────────────────────────
+    function exportPdf() {
+        const thead = document.getElementById('itrPrintHead');
+        const tbody = document.getElementById('itrPrintBody');
+        thead.innerHTML = '<tr><th>#</th><th>Date</th><th>Client Name</th><th>PAN</th><th>Mobile</th><th>FY</th><th>Caller</th><th>Manager</th><th>Preparer</th><th>Filing Status</th><th>Filing Type</th><th>ITR Type</th><th>Return Outcome</th><th>Final Fee</th><th>Paid</th><th>Balance</th><th>Pay. Status</th><th>Pay. Handled By</th></tr>';
+        tbody.innerHTML = filtered.map((f, i) => {
+            const c = f.client || {};
+            const feeSet = f.finalFee != null && f.finalFee > 0;
+            const fmtM = v => (v != null && feeSet) ? '₹' + Number(v).toLocaleString('en-IN') : '';
+            return `<tr><td>${i+1}</td><td>${fmtDate(f.assignedDate)}</td><td>${escHtml(c.name||'')}</td><td>${escHtml(c.pan||'')}</td><td>${escHtml(c.mobile||'')}</td><td>${escHtml(f.financialYear||'')}</td><td>${escHtml(c.caller||'')}</td><td>${escHtml(f.manager||'')}</td><td>${escHtml(f.preparer||'')}</td><td>${escHtml(f.filingStatus||'')}</td><td>${escHtml(f.filingType||'')}</td><td>${escHtml(f.itrType||'')}</td><td>${escHtml(f.returnOutcome||'')}</td><td>${fmtM(f.finalFee)}</td><td>${fmtM(f.totalPaid)}</td><td>${fmtM(f.balance)}</td><td>${escHtml(f.paymentStatus||'')}</td><td>${escHtml(f.paymentHandledBy||'')}</td></tr>`;
+        }).join('');
+        document.getElementById('itrPrintArea').style.display = 'block';
+        window.print();
+        document.getElementById('itrPrintArea').style.display = 'none';
+    }
+
+    // ── Update status modal ──────────────────────────────────────────
+    async function loadItrStatuses() {
+        if (itrStatuses.length) return;
+        try { const r = await fetch('/api/itr-statuses'); itrStatuses = await r.json(); } catch (e) { itrStatuses = []; }
+    }
+
+    document.addEventListener('click', async function (e) {
+        const pg = e.target.closest('[data-page]');
+        if (pg) { currentPage = parseInt(pg.dataset.page); renderTable(); }
+        const selectClientBtn = e.target.closest('.select-client-btn');
+        if (selectClientBtn) { selectClient(selectClientBtn.dataset.id); }
+    });
+
+    document.getElementById('confirmStatusBtn').addEventListener('click', async function () {
+        const status = document.getElementById('statusSelect').value;
+        if (!status) { document.getElementById('statusError').classList.remove('d-none'); return; }
+        document.getElementById('statusError').classList.add('d-none');
+        this.disabled = true; this.textContent = 'Updating...';
+        try {
+            const res = await fetch('/api/itr-filings/' + pendingStatusId + '/status', {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ filingStatus: status })
+            });
+            if (!res.ok) throw new Error();
+            bootstrap.Modal.getInstance(document.getElementById('updateStatusModal')).hide();
+            loadFilings();
+        } catch (e) { alert('Failed to update status.'); }
+        this.disabled = false; this.textContent = 'Update';
+    });
+
+    // ── Filter panel toggle ──────────────────────────────────────────
+    const _filterBtn   = document.getElementById('filterToggleBtn');
+    const _filterPanel = document.getElementById('filterPanel');
+
+    function openFilterPanel() {
+        _filterPanel.classList.remove('d-none');
+        _filterBtn.style.background = 'rgba(99,102,241,.08)';
+    }
+    function closeFilterPanel() {
+        _filterPanel.classList.add('d-none');
+        _filterBtn.style.background = '';
+    }
+
+    _filterBtn.addEventListener('click', function (e) {
+        e.stopPropagation();
+        if (_filterPanel.classList.contains('d-none')) openFilterPanel();
+        else closeFilterPanel();
+    });
+    document.addEventListener('click', function (e) {
+        if (!_filterPanel.classList.contains('d-none') &&
+            !_filterPanel.contains(e.target) &&
+            !_filterBtn.contains(e.target)) {
+            closeFilterPanel();
+        }
+    });
+
+    // Apply & Close button
+    document.getElementById('fpApplyBtn').addEventListener('click', function () {
+        applyFilter();
+        closeFilterPanel();
+    });
+
+    // Close (X) button in panel header
+    document.getElementById('fpCloseBtn').addEventListener('click', function (e) {
+        e.stopPropagation();
+        closeFilterPanel();
+    });
+
+    // ── Filter listeners ─────────────────────────────────────────────
+    // Search is live
+    document.getElementById('searchInput').addEventListener('input', applyFilter);
+
+    // Panel filters update badge count on change but don't apply until Apply is clicked
+    const panelFilterIds = [
+        'filterDateFrom','filterDateTo','filterFY',
+        'filterCaller','filterManager','filterPreparer',
+        'filterStatus','filterFilingType','filterItrType','filterReturnOutcome',
+        'filterPayStatus','filterPayHandler',
+        'filterFeeMin','filterFeeMax','filterPaidMin','filterPaidMax','filterBalMin','filterBalMax'
+    ];
+    panelFilterIds.forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+        el.addEventListener('change', function () { updateBadgeCount(); });
+        el.addEventListener('input',  function () { updateBadgeCount(); });
+    });
+
+    function updateBadgeCount() {
+        const vals = panelFilterIds.map(id => {
+            const el = document.getElementById(id);
+            return el ? el.value : '';
+        });
+        const count = vals.filter(Boolean).length;
+        const badge = document.getElementById('filterBadge');
+        if (count > 0) { badge.textContent = count; badge.classList.remove('d-none'); }
+        else { badge.classList.add('d-none'); }
+    }
+
+    // Page size
+    document.getElementById('pageSizeSelect').addEventListener('change', function() {
+        pageSize = parseInt(this.value);
+        const lbl = document.getElementById('pageSizeFaceLabel');
+        if (lbl) lbl.textContent = this.value;
+        applyFilter();
+    });
+
+    // Clear all (toolbar button)
+    document.getElementById('clearFiltersBtn').addEventListener('click', function() {
+        document.getElementById('searchInput').value = '';
+        panelFilterIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        applyFilter();
+    });
+
+    // Reset inside filter panel
+    document.getElementById('fpClearBtn').addEventListener('click', function () {
+        panelFilterIds.forEach(id => {
+            const el = document.getElementById(id);
+            if (el) el.value = '';
+        });
+        updateBadgeCount();
+        applyFilter();
+    });
+
+    document.getElementById('exportCsvBtn').addEventListener('click', exportCsv);
+    document.getElementById('exportPdfBtn').addEventListener('click', exportPdf);
+
+    // ── Assign Client modal ──────────────────────────────────────────
+    let allClients = [];
+    let selectedClientId = null;
+    let fys = [];
+
+    async function openAssignModal() {
+        selectedClientId = null;
+        goToStep1();
+        new bootstrap.Modal(document.getElementById('assignClientModal')).show();
+        if (!allClients.length) {
+            try { const r = await fetch('/api/clients'); allClients = (await r.json()).filter(c => c.status === 'Active'); }
+            catch (e) { allClients = []; }
+        }
+        if (!fys.length) {
+            try { const r = await fetch('/api/financial-years'); fys = await r.json(); } catch (e) { fys = []; }
+        }
+        renderClientList('');
+    }
+
+    function renderClientList(q) {
+        const tbody = document.getElementById('clientListBody');
+        const rows = allClients.filter(c => !q ||
+            (c.name||'').toLowerCase().includes(q) ||
+            (c.pan ||'').toLowerCase().includes(q) ||
+            (c.mobile||'').toLowerCase().includes(q));
+        if (!rows.length) {
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center text-secondary-light py-20">No active clients found.</td></tr>';
+        } else {
+            tbody.innerHTML = rows.map(c => {
+                const sel = c.id === selectedClientId;
+                return `<tr class="${sel ? 'table-primary' : ''}">
+                    <td class="fw-medium">${escHtml(c.name)}</td>
+                    <td>${escHtml(c.pan)}</td>
+                    <td>${escHtml(c.mobile)}</td>
+                    <td class="text-center">
+                        <button type="button" class="btn ${sel ? 'btn-primary' : 'btn-outline-primary-600'} btn-sm radius-8 px-12 py-6 text-xs select-client-btn d-inline-flex align-items-center gap-1" data-id="${c.id}">
+                            ${sel ? '<iconify-icon icon="lucide:check" class="text-sm"></iconify-icon>Selected' : 'Select'}
+                        </button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+    }
+
+    function selectClient(id) {
+        selectedClientId = id;
+        document.getElementById('step1Error').classList.add('d-none');
+        renderClientList(document.getElementById('clientSearch').value.trim().toLowerCase());
+    }
+
+    function goToStep1() {
+        document.getElementById('step1Panel').classList.remove('d-none');
+        document.getElementById('step2Panel').classList.add('d-none');
+        document.getElementById('nextStepBtn').classList.remove('d-none');
+        document.getElementById('assignServiceBtn').classList.add('d-none');
+        document.getElementById('backToStep1Btn').classList.add('d-none');
+        document.getElementById('step1Crumb').className = 'badge bg-primary-600 text-white text-xs px-10 py-4 radius-8';
+        document.getElementById('step2Crumb').className = 'badge bg-neutral-200 text-secondary-light text-xs px-10 py-4 radius-8';
+        if (document.getElementById('clientSearch')) document.getElementById('clientSearch').value = '';
+    }
+
+    function goToStep2() {
+        const client = allClients.find(c => c.id === selectedClientId);
+        if (!client) return;
+        document.getElementById('step1Panel').classList.add('d-none');
+        document.getElementById('step2Panel').classList.remove('d-none');
+        document.getElementById('nextStepBtn').classList.add('d-none');
+        document.getElementById('assignServiceBtn').classList.remove('d-none');
+        document.getElementById('backToStep1Btn').classList.remove('d-none');
+        document.getElementById('step1Crumb').className = 'badge bg-success-600 text-white text-xs px-10 py-4 radius-8';
+        document.getElementById('step2Crumb').className = 'badge bg-primary-600 text-white text-xs px-10 py-4 radius-8';
+        const initials = client.name.split(' ').map(w => w[0]).join('').substring(0, 2).toUpperCase();
+        document.getElementById('s2_avatar').textContent = initials;
+        document.getElementById('s2_name').textContent = client.name;
+        document.getElementById('s2_pan').textContent = client.pan;
+        document.getElementById('s2_mobile').textContent = client.mobile;
+        const fyEl = document.getElementById('fySelect');
+        fyEl.innerHTML = '<option value="">Select financial year...</option>';
+        fys.forEach(f => { const o = document.createElement('option'); o.value = f.name; o.textContent = f.name; fyEl.appendChild(o); });
+        document.getElementById('step2Error').classList.add('d-none');
+    }
+
+    document.getElementById('openAssignBtn').addEventListener('click', openAssignModal);
+    window.openAssignModal = openAssignModal;
+
+    // Delegated chip click handler (chips are dynamically rendered)
+    const _navChips = document.getElementById('itrNavChips');
+    if (_navChips) {
+        _navChips.addEventListener('click', function(e) {
+            const btn = e.target.closest('.itr-chip');
+            if (btn) window.chipFilter(btn.dataset.field, btn.dataset.value);
+        });
+    }
+    document.getElementById('clientSearch').addEventListener('input', function () { renderClientList(this.value.trim().toLowerCase()); });
+    document.getElementById('nextStepBtn').addEventListener('click', function () {
+        if (!selectedClientId) { document.getElementById('step1Error').classList.remove('d-none'); return; }
+        goToStep2();
+    });
+    document.getElementById('backToStep1Btn').addEventListener('click', goToStep1);
+
+    document.getElementById('assignServiceBtn').addEventListener('click', async function () {
+        const fy = document.getElementById('fySelect').value;
+        const errEl = document.getElementById('step2Error');
+        if (!fy) { errEl.textContent = 'Please select a Financial Year.'; errEl.classList.remove('d-none'); return; }
+        errEl.classList.add('d-none');
+        this.disabled = true;
+        this.innerHTML = '<iconify-icon icon="svg-spinners:ring-resize" class="text-md"></iconify-icon>Assigning...';
+        try {
+            const res = await fetch('/api/itr-filings', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ clientId: selectedClientId, financialYear: fy, preparer: "" })
+            });
+            const data = await res.json();
+            if (res.status === 409) { errEl.textContent = data.message; errEl.classList.remove('d-none'); return; }
+            if (!res.ok) { errEl.textContent = data.message || 'Failed to assign.'; errEl.classList.remove('d-none'); return; }
+            bootstrap.Modal.getInstance(document.getElementById('assignClientModal')).hide();
+            window.location.href = '/services/itr-individual/' + data.id;
+        } catch (e) {
+            errEl.textContent = 'Network error. Please try again.'; errEl.classList.remove('d-none');
+        } finally {
+            this.disabled = false;
+            this.innerHTML = '<iconify-icon icon="lucide:check-circle" class="text-md"></iconify-icon>Assign Service';
+        }
+    });
+
+    loadFilings();
+})();
+</script>
