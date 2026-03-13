@@ -20,8 +20,8 @@
 }
 .dm-drag-handle:hover { color: #6366f1; }
 .dm-drag-handle:active { cursor: grabbing; }
-.dm-sortable-helper { background: #f0f3ff !important; box-shadow: 0 4px 16px rgba(99,102,241,.18); opacity: .95; }
-.dm-sortable-placeholder td { background: #eef2ff !important; border: 1px dashed #a5b4fc !important; }
+.dm-drag-over { outline: 2px dashed #a5b4fc; background: #eef2ff !important; }
+tr.dm-dragging { opacity: 0.4; }
 </style>
 
 <div class="row" style="row-gap: 12px;">
@@ -548,30 +548,79 @@
         setTimeout(() => div.remove(), 3000);
     }
 
-    // ── Drag-and-drop sortable helpers ────────────────────────────
+    // ── Drag-and-drop sortable helpers (native HTML5) ────────────
+    var _dmDragSrc = null;
+
     function dmDestroy(tbodyId) {
-        var $el = $('#' + tbodyId);
-        if ($el.data('ui-sortable')) { try { $el.sortable('destroy'); } catch(e) {} }
+        var tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.removeAttribute('data-dm-entity');
     }
+
     function dmInit(tbodyId, entity) {
-        dmDestroy(tbodyId);
-        $('#' + tbodyId).sortable({
-            handle: '.dm-drag-handle',
-            placeholder: 'dm-sortable-placeholder',
-            helper: function(e, ui) {
-                ui.children().each(function() { $(this).width($(this).width()); });
-                return ui.clone().addClass('dm-sortable-helper');
-            },
-            forcePlaceholderSize: true,
-            opacity: 0.9,
-            tolerance: 'pointer',
-            cursor: 'grabbing',
-            update: function() {
-                var ids = $(this).children('tr[data-id]').map(function() {
-                    return $(this).data('id');
-                }).get();
-                $(this).children('tr[data-id]').each(function(i) {
-                    $(this).find('td:nth-child(2)').text(String(i + 1).padStart(2, '0'));
+        var tbody = document.getElementById(tbodyId);
+        if (!tbody) return;
+        tbody.setAttribute('data-dm-entity', entity);
+
+        Array.from(tbody.querySelectorAll('tr[data-id]')).forEach(function(row) {
+            var handle = row.querySelector('.dm-drag-handle');
+            if (!handle) return;
+
+            handle.addEventListener('mousedown', function() {
+                row.setAttribute('draggable', 'true');
+            });
+            handle.addEventListener('mouseup', function() {
+                row.setAttribute('draggable', 'false');
+            });
+
+            row.addEventListener('dragstart', function(e) {
+                _dmDragSrc = row;
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', row.getAttribute('data-id'));
+                setTimeout(function() { row.classList.add('dm-dragging'); }, 0);
+            });
+
+            row.addEventListener('dragend', function() {
+                row.setAttribute('draggable', 'false');
+                row.classList.remove('dm-dragging');
+                Array.from(tbody.querySelectorAll('tr')).forEach(function(r) {
+                    r.classList.remove('dm-drag-over');
+                });
+                _dmDragSrc = null;
+            });
+
+            row.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                if (_dmDragSrc && _dmDragSrc !== row) {
+                    Array.from(tbody.querySelectorAll('tr')).forEach(function(r) { r.classList.remove('dm-drag-over'); });
+                    row.classList.add('dm-drag-over');
+                }
+            });
+
+            row.addEventListener('dragleave', function() {
+                row.classList.remove('dm-drag-over');
+            });
+
+            row.addEventListener('drop', function(e) {
+                e.preventDefault();
+                row.classList.remove('dm-drag-over');
+                if (!_dmDragSrc || _dmDragSrc === row) return;
+                var rect = row.getBoundingClientRect();
+                var mid  = rect.top + rect.height / 2;
+                if (e.clientY < mid) {
+                    tbody.insertBefore(_dmDragSrc, row);
+                } else {
+                    tbody.insertBefore(_dmDragSrc, row.nextSibling);
+                }
+                // Update S.L
+                Array.from(tbody.querySelectorAll('tr[data-id]')).forEach(function(r, i) {
+                    var slCell = r.querySelector('td:nth-child(2)');
+                    if (slCell) slCell.textContent = String(i + 1).padStart(2, '0');
+                });
+                // Persist
+                var ids = Array.from(tbody.querySelectorAll('tr[data-id]')).map(function(r) {
+                    return r.getAttribute('data-id');
                 });
                 fetch('/api/dropdown/' + entity + '/reorder', {
                     method: 'PATCH',
@@ -582,7 +631,7 @@
                 }).catch(function() {
                     showToast('Failed to save order.', 'error');
                 });
-            }
+            });
         });
     }
 
