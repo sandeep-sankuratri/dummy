@@ -10,6 +10,18 @@
     height: 26px !important;
     padding: 1px !important;
 }
+.dm-drag-handle {
+    cursor: grab;
+    text-align: center;
+    color: #bbb;
+    padding: 0 4px !important;
+    width: 22px;
+    min-width: 22px;
+}
+.dm-drag-handle:hover { color: #6366f1; }
+.dm-drag-handle:active { cursor: grabbing; }
+.dm-sortable-helper { background: #f0f3ff !important; box-shadow: 0 4px 16px rgba(99,102,241,.18); opacity: .95; }
+.dm-sortable-placeholder td { background: #eef2ff !important; border: 1px dashed #a5b4fc !important; }
 </style>
 
 <div class="row" style="row-gap: 12px;">
@@ -37,14 +49,15 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Financial Year</th>
                                 <th scope="col" class="text-center">Status</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="fy_tableBody">
-                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -73,13 +86,14 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Type Name</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="itrType_tableBody">
-                            <tr><td colspan="3" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -110,13 +124,14 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Name</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="pt_tableBody">
-                            <tr><td colspan="3" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -145,13 +160,14 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Name</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="mop_tableBody">
-                            <tr><td colspan="3" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -182,13 +198,14 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Source Name</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="src_tableBody">
-                            <tr><td colspan="3" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -218,14 +235,15 @@
                     <table class="table bordered-table sm-table mb-0">
                         <thead>
                             <tr>
-                                <th scope="col" style="width:48px">S.L</th>
+                                <th scope="col" class="dm-drag-handle" style="width:22px;padding:4px 0;"></th>
+                                <th scope="col" style="width:40px">S.L</th>
                                 <th scope="col">Outcome Name</th>
                                 <th scope="col" class="text-center" style="width:64px">Color</th>
                                 <th scope="col" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody id="ro_tableBody">
-                            <tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr>
+                            <tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -261,8 +279,8 @@
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2c_tableBody"><tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th class="dm-drag-handle" style="width:22px;padding:4px 0;"></th><th style="width:40px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2c_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -282,8 +300,8 @@
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2p_tableBody"><tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th class="dm-drag-handle" style="width:22px;padding:4px 0;"></th><th style="width:40px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2p_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -303,8 +321,8 @@
                         </div>
                         <div class="table-responsive scroll-sm">
                             <table class="table bordered-table sm-table mb-0">
-                                <thead><tr><th style="width:48px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
-                                <tbody id="s2o_tableBody"><tr><td colspan="4" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
+                                <thead><tr><th class="dm-drag-handle" style="width:22px;padding:4px 0;"></th><th style="width:40px">S.L</th><th>Status Name</th><th class="text-center" style="width:64px">Color</th><th class="text-center">Action</th></tr></thead>
+                                <tbody id="s2o_tableBody"><tr><td colspan="5" class="text-center py-16 text-secondary-light">Loading...</td></tr></tbody>
                             </table>
                         </div>
                     </div>
@@ -530,6 +548,44 @@
         setTimeout(() => div.remove(), 3000);
     }
 
+    // ── Drag-and-drop sortable helpers ────────────────────────────
+    function dmDestroy(tbodyId) {
+        var $el = $('#' + tbodyId);
+        if ($el.data('ui-sortable')) { try { $el.sortable('destroy'); } catch(e) {} }
+    }
+    function dmInit(tbodyId, entity) {
+        dmDestroy(tbodyId);
+        $('#' + tbodyId).sortable({
+            handle: '.dm-drag-handle',
+            placeholder: 'dm-sortable-placeholder',
+            helper: function(e, ui) {
+                ui.children().each(function() { $(this).width($(this).width()); });
+                return ui.clone().addClass('dm-sortable-helper');
+            },
+            forcePlaceholderSize: true,
+            opacity: 0.9,
+            tolerance: 'pointer',
+            cursor: 'grabbing',
+            update: function() {
+                var ids = $(this).children('tr[data-id]').map(function() {
+                    return $(this).data('id');
+                }).get();
+                $(this).children('tr[data-id]').each(function(i) {
+                    $(this).find('td:nth-child(2)').text(String(i + 1).padStart(2, '0'));
+                });
+                fetch('/api/dropdown/' + entity + '/reorder', {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ids: ids })
+                }).then(function(res) {
+                    if (!res.ok) showToast('Failed to save order.', 'error');
+                }).catch(function() {
+                    showToast('Failed to save order.', 'error');
+                });
+            }
+        });
+    }
+
     // ════════════════════════════════════════
     //  FINANCIAL YEARS
     // ════════════════════════════════════════
@@ -542,11 +598,12 @@
     function renderFYs() {
         const tbody = document.getElementById('fy_tableBody');
         if (!allFYs.length) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No financial years found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No financial years found. Add one above.</td></tr>';
+            dmDestroy('fy_tableBody'); return;
         }
         tbody.innerHTML = allFYs.map((fy, i) => `
-            <tr>
+            <tr data-id="${fy.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(fy.name)}</span></td>
                 <td class="text-center">
@@ -567,6 +624,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('fy_tableBody', 'financial-years');
     }
 
     // Add FY
@@ -648,11 +706,12 @@
     function renderReturnOutcomes() {
         const tbody = document.getElementById('ro_tableBody');
         if (!allReturnOutcomes.length) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No outcomes found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No outcomes found. Add one above.</td></tr>';
+            dmDestroy('ro_tableBody'); return;
         }
         tbody.innerHTML = allReturnOutcomes.map((r, i) => `
-            <tr>
+            <tr data-id="${r.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(r.name)}</span></td>
                 <td class="text-center">
@@ -675,6 +734,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('ro_tableBody', 'return-outcomes');
     }
 
     document.getElementById('ro_addBtn').addEventListener('click', async function () {
@@ -757,11 +817,12 @@
     function renderItrTypes() {
         const tbody = document.getElementById('itrType_tableBody');
         if (!allItrTypes.length) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-20 text-secondary-light">No types found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No types found. Add one above.</td></tr>';
+            dmDestroy('itrType_tableBody'); return;
         }
         tbody.innerHTML = allItrTypes.map((t, i) => `
-            <tr>
+            <tr data-id="${t.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(t.name)}</span></td>
                 <td class="text-center">
@@ -779,6 +840,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('itrType_tableBody', 'itr-types');
     }
 
     document.getElementById('itrType_addBtn').addEventListener('click', async function () {
@@ -857,11 +919,12 @@
     function renderSources() {
         const tbody = document.getElementById('src_tableBody');
         if (!allSources.length) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-20 text-secondary-light">No sources found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No sources found. Add one above.</td></tr>';
+            dmDestroy('src_tableBody'); return;
         }
         tbody.innerHTML = allSources.map((s, i) => `
-            <tr>
+            <tr data-id="${s.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(s.name)}</span></td>
                 <td class="text-center">
@@ -879,6 +942,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('src_tableBody', 'sources');
     }
 
     // Add Source
@@ -1010,11 +1074,12 @@
     function renderPaidTos() {
         const tbody = document.getElementById('pt_tableBody');
         if (!allPaidTos.length) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            dmDestroy('pt_tableBody'); return;
         }
         tbody.innerHTML = allPaidTos.map((p, i) => `
-            <tr>
+            <tr data-id="${p.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(p.name)}</span></td>
                 <td class="text-center">
@@ -1032,6 +1097,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('pt_tableBody', 'paid-to');
     }
 
     // Add Paid To
@@ -1112,11 +1178,12 @@
     function renderModeOfPayments() {
         const tbody = document.getElementById('mop_tableBody');
         if (!allModeOfPayments.length) {
-            tbody.innerHTML = '<tr><td colspan="3" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            dmDestroy('mop_tableBody'); return;
         }
         tbody.innerHTML = allModeOfPayments.map((m, i) => `
-            <tr>
+            <tr data-id="${m.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(m.name)}</span></td>
                 <td class="text-center">
@@ -1134,6 +1201,7 @@
                     </div>
                 </td>
             </tr>`).join('');
+        dmInit('mop_tableBody', 'mode-of-payment');
     }
 
     // Add Mode of Payment
@@ -1222,11 +1290,12 @@
         const tbody = document.getElementById(tbodyId);
         const filtered = opts.filter(o => o.role === role);
         if (!filtered.length) {
-            tbody.innerHTML = '<tr><td colspan="4" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
-            return;
+            tbody.innerHTML = '<tr><td colspan="5" class="text-center py-20 text-secondary-light">No entries found. Add one above.</td></tr>';
+            dmDestroy(tbodyId); return;
         }
         tbody.innerHTML = filtered.map((o, i) => `
-            <tr>
+            <tr data-id="${o.id}">
+                <td class="dm-drag-handle"><iconify-icon icon="lucide:grip-vertical" style="font-size:14px;vertical-align:middle;pointer-events:none;"></iconify-icon></td>
                 <td>${String(i + 1).padStart(2, '0')}</td>
                 <td><span class="fw-medium text-primary-light">${escHtml(o.name)}</span></td>
                 <td class="text-center">${colorDot(o.color)}</td>
@@ -1246,6 +1315,8 @@
                 </td>
             </tr>
         `).join('');
+        const entityMap = { s2c_tableBody: 'itr-status2', s2p_tableBody: 'itr-status2', s2o_tableBody: 'itr-status2' };
+        dmInit(tbodyId, entityMap[tbodyId] || 'itr-status2');
     }
 
     function renderS2Caller()   { renderS2Tab(allS2Options, 's2c_tableBody', 'caller'); }
